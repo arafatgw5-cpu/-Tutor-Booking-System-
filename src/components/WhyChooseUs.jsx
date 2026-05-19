@@ -4,42 +4,80 @@ const WhyChooseUs = () => {
   const features = [
     {
       title: "Easy Booking",
-      description: "Book tutors instantly with a smooth and simple interface."
+      description: "Book tutors instantly with a smooth, effortless and simple user interface.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      )
     },
     {
       title: "Verified Tutors",
-      description: "All tutors are verified to ensure quality education."
+      description: "All tutors undergo a strict verification process to ensure premium quality education.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      )
     },
     {
       title: "Flexible Scheduling",
-      description: "Choose time slots that fit your daily routine."
+      description: "Choose optimal time slots that seamlessly fit into your busy daily routine.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      )
     },
     {
       title: "Affordable Pricing",
-      description: "Find tutors that match your budget easily."
+      description: "Find top-tier competitive tutors that perfectly match your budget easily.",
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      )
     }
   ];
 
   return (
-    <section className="bg-[#fcfcfc] py-16 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative bg-gray-50/50 py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      {/* ব্যাকগ্রাউন্ড অ্যাম্বিয়েন্ট লাইট (Silicon Valley Vibe) */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-100 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-100 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto relative">
         
-        {/* Section Heading */}
-        <h2 className="text-3xl font-bold text-center text-gray-900 mb-12 font-serif tracking-wide">
-          Why Choose MediQueue?
-        </h2>
+        {/* হেডিং সেকশন */}
+        <div className="text-center mb-20 space-y-3">
+          <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent tracking-tight">
+            Why Choose Us?
+          </h2>
+          <p className="text-gray-500 text-lg max-w-md mx-auto">
+            We provide the ultimate platform for seamless, secure, and smart learning experiences.
+          </p>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 mx-auto rounded-full mt-2"></div>
+        </div>
         
-        {/* Cards Container */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* কার্ডস গ্রিড */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-white border border-gray-200 rounded-2xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out"
+              className="bg-white border border-gray-100/80 rounded-3xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 ease-out group"
             >
-              <h3 className="text-lg font-bold text-gray-900 mb-3">
+              {/* মডার্ন আইকন বক্স */}
+              <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-teal-600 group-hover:to-emerald-500 group-hover:text-white transition-all duration-500 ease-out shadow-sm shadow-emerald-100 group-hover:rotate-6">
+                {feature.icon}
+              </div>
+              
+              {/* ফিচার টাইটেল */}
+              <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-teal-600 transition-colors duration-300">
                 {feature.title}
               </h3>
-              <p className="text-gray-500 text-sm leading-relaxed px-2">
+              
+              {/* বর্ণনা */}
+              <p className="text-gray-500 text-sm leading-relaxed px-1">
                 {feature.description}
               </p>
             </div>

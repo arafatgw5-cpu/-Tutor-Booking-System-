@@ -3,11 +3,17 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import FilterBar from "../../components/FilterBar"; // আপনার ফোল্ডার স্ট্রাকচার অনুযায়ী পাথ ঠিক করে নিবেন
 
 const AllTutors = () => {
   const router = useRouter();
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // ফিল্টার স্টেট
+  const [searchName, setSearchName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     fetchTutors();
@@ -16,7 +22,6 @@ const AllTutors = () => {
   const fetchTutors = async () => {
     try {
       setLoading(true);
-      // এখানে limit=8 করে দেওয়া হয়েছে ৮টা ডাটা আনার জন্য
       const response = await fetch("/api/tutors?limit=8");
       const data = await response.json();
 
@@ -30,13 +35,41 @@ const AllTutors = () => {
       console.error("Error fetching tutors:", error);
       setTutors([]);
     } finally {
-      loading && setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleBookSession = (tutorId) => {
     router.push(`/tutors/${tutorId}`);
   };
+
+  // ফিল্টার রিসেট ফাংশন
+  const handleResetFilters = () => {
+    setSearchName("");
+    setStartDate("");
+    setEndDate("");
+  };
+
+  // ডাইনামিক ফিল্টারিং লজিক (নাম এবং তারিখ)
+  const filteredTutors = tutors.filter((tutor) => {
+    // ১. নাম অনুযায়ী ফিল্টার
+    const matchName = tutor.name?.toLowerCase().includes(searchName.toLowerCase());
+    
+    // ২. তারিখ অনুযায়ী ফিল্টার (যদি tutor.sessionStartDate থাকে)
+    let matchDate = true;
+    if (tutor.sessionStartDate) {
+      const tutorDate = new Date(tutor.sessionStartDate);
+      
+      if (startDate) {
+        matchDate = matchDate && tutorDate >= new Date(startDate);
+      }
+      if (endDate) {
+        matchDate = matchDate && tutorDate <= new Date(endDate);
+      }
+    }
+
+    return matchName && matchDate;
+  });
 
   // কঙ্কাল লোডার (Skeleton Loader Component)
   const SkeletonCard = () => (
@@ -60,17 +93,25 @@ const AllTutors = () => {
       <div className="absolute top-20 right-1/4 w-72 h-72 bg-emerald-100 rounded-full blur-3xl opacity-40 -z-10 animate-blob animation-delay-2000"></div>
 
       {/* হেডিং সেকশন */}
-      <div className="text-center mb-16 space-y-3">
-        <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent tracking-tight">
-          All Available Tutors
+      <div className="text-center mb-12 space-y-3">
+        <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+          All Tutors
         </h2>
-        <p className="text-gray-500 text-lg max-w-md mx-auto">
-          Explore all our professional tutors and start your learning journey today.
-        </p>
         <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 mx-auto rounded-full mt-2"></div>
       </div>
 
-      {/* লোডিং অবস্থা (৮টি স্কেলিটন কার্ড দেখাবে) */}
+      {/* আলাদা করা ফিল্টার কম্পোনেন্ট এখানে ব্যবহার করা হয়েছে */}
+      <FilterBar 
+        searchName={searchName}
+        setSearchName={setSearchName}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        handleResetFilters={handleResetFilters}
+      />
+
+      {/* লোডিং অবস্থা */}
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {[...Array(8)].map((_, idx) => (
@@ -80,15 +121,14 @@ const AllTutors = () => {
       )}
 
       {/* টিউটর গ্রিড */}
-      {!loading && (
+      {!loading && filteredTutors.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {tutors?.map((tutor) => (
+          {filteredTutors.map((tutor) => (
             <div
               key={tutor._id}
               className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 ease-out group flex flex-col justify-between"
             >
               <div>
-                {/* টিউটর ছবি ও ব্যাজ */}
                 <div className="relative w-full h-52 bg-gray-50 overflow-hidden">
                   <Image
                     src={
@@ -101,13 +141,11 @@ const AllTutors = () => {
                     unoptimized
                     className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
-                  {/* টিচিং মোড ব্যাজ */}
                   <span className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-teal-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm border border-teal-100 uppercase tracking-wider">
                     {tutor.teachingMode || "Online"}
                   </span>
                 </div>
 
-                {/* টিউটর ইনফো */}
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-teal-600 transition-colors duration-300">
                     {tutor.name}
@@ -118,15 +156,13 @@ const AllTutors = () => {
                   </p>
 
                   <div className="space-y-3 text-sm text-gray-600">
-                    {/* এভেইলেবল টাইম */}
                     <div className="flex items-center gap-2.5">
                       <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       <span className="truncate">
-                        <strong className="text-gray-700">Available:</strong> {tutor.availableDays} ({tutor.availableTime})
+                        <strong className="text-gray-700">Available:</strong> {tutor.availableDays}
                       </span>
                     </div>
 
-                    {/* ইন্সটিটিউশন */}
                     <div className="flex items-center gap-2.5">
                       <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
                       <span className="truncate">
@@ -134,26 +170,16 @@ const AllTutors = () => {
                       </span>
                     </div>
 
-                    {/* এক্সপেরিয়েন্স */}
                     <div className="flex items-center gap-2.5">
                       <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
                       <span>
                         <strong className="text-gray-700">Experience:</strong> {tutor.experience}
                       </span>
                     </div>
-
-                    {/* লোকেশন */}
-                    <div className="flex items-center gap-2.5">
-                      <svg className="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                      <span>
-                        <strong className="text-gray-700">Location:</strong> {tutor.location}
-                      </span>
-                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* ফি এবং বুকিং বাটন */}
               <div className="p-6 pt-0 border-t border-gray-50 bg-gray-50/50 rounded-b-3xl">
                 <div className="flex items-baseline justify-between mb-4 pt-4">
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Hourly Fee</span>
@@ -176,13 +202,21 @@ const AllTutors = () => {
       )}
 
       {/* ফাকা অবস্থা (Empty State) */}
-      {tutors.length === 0 && !loading && (
+      {!loading && filteredTutors.length === 0 && (
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200 max-w-lg mx-auto shadow-sm animate-fadeIn">
-          <div className="w-16 h-16 bg-teal-50 text-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </div>
-          <h3 className="text-2xl font-bold text-gray-700">No Tutors Found</h3>
-          <p className="text-gray-400 mt-2 px-6">We couldn't find any available tutors at the moment. Please check back later!</p>
+          <h3 className="text-2xl font-bold text-gray-700">No Match Found</h3>
+          <p className="text-gray-400 mt-2 px-6">
+            We couldn't find any tutor matching your search criteria. Try resetting the filters.
+          </p>
+          <button 
+            onClick={handleResetFilters}
+            className="mt-6 px-6 py-2 bg-teal-50 text-teal-600 font-semibold rounded-lg hover:bg-teal-100 transition-colors"
+          >
+            Clear Filters
+          </button>
         </div>
       )}
     </section>

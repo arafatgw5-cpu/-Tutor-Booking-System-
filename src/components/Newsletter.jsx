@@ -1,74 +1,82 @@
-"use client"; // <-- Add this line at the very top!
+"use client";
 
 import React from 'react';
 
 const Newsletter = () => {
   return (
-    <section className="bg-gray-50 py-16 px-4 sm:px-6 lg:px-8 font-sans">
-      {/* Main Container - Card Style */}
-      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-        <div className="flex flex-col lg:flex-row items-center justify-between p-8 sm:p-12 gap-10">
+    <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white">
+      {/* ব্যাকগ্রাউন্ড অ্যাম্বিয়েন্ট গ্লো ইফেক্ট */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-80 h-80 bg-teal-50 rounded-full blur-3xl opacity-60 -z-10 animate-blob"></div>
+      <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-80 h-80 bg-emerald-50 rounded-full blur-3xl opacity-60 -z-10 animate-blob animation-delay-2000"></div>
+
+      <div className="max-w-5xl mx-auto relative">
+        {/* মেইন কার্ড কন্টেইনার */}
+        <div className="bg-white rounded-[32px] shadow-xl border border-gray-100/80 p-8 sm:p-12 lg:p-16 relative overflow-hidden group">
           
-          {/* Left Side: Text Content */}
-          <div className="w-full lg:w-1/2 text-center lg:text-left">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight font-serif">
-              Get the latest news!
-            </h2>
-            <p className="text-gray-500 text-base sm:text-lg leading-relaxed max-w-lg mx-auto lg:mx-0">
-              Subscribe to our newsletter and stay updated. We promise not to spam your inbox, only good vibes and great updates.
-            </p>
-          </div>
+          {/* কার্ডের ভিতরের ডানদিকের হালকা গ্রেডিয়েন্ট সার্কেল */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-full opacity-50 -z-10 group-hover:scale-110 transition-transform duration-700"></div>
 
-          {/* Right Side: Input Form */}
-          <div className="w-full lg:w-1/2">
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                // Add your actual subscription logic here later
-                alert('Thank you for subscribing!');
-              }}
-              className="flex flex-col sm:flex-row gap-4 w-full max-w-md mx-auto lg:mx-0"
-            >
-              {/* Input Field with Icon */}
-              <div className="relative flex-grow">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <svg 
-                    className="h-5 w-5 text-gray-400" 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
-                    fill="currentColor" 
-                    aria-hidden="true"
-                  >
-                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                  </svg>
-                </div>
-                <input
-                  type="email"
-                  placeholder="john@example.com"
-                  className="w-full py-4 pl-12 pr-4 text-gray-700 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:bg-white focus:border-[#00bfa5] focus:ring-4 focus:ring-[#00bfa5]/10 transition-all duration-300"
-                  required
-                />
-              </div>
-              
-              {/* Submit Button */}
-              <button
-                type="submit"
-                className="bg-[#00bfa5] hover:bg-[#00a690] active:bg-[#008f7a] text-white font-semibold py-4 px-8 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex-shrink-0"
-              >
-                SIGN UP
-              </button>
-            </form>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
             
-            {/* Privacy Note */}
-            <p className="text-xs text-gray-400 mt-4 text-center lg:text-left">
-              We care about your data. Read our{' '}
-              <a href="#" className="underline hover:text-gray-600 transition-colors">
-                Privacy Policy
-              </a>.
-            </p>
-          </div>
+            {/* বাম পাশ: টেক্সট কন্টেন্ট */}
+            <div className="w-full lg:w-1/2 text-center lg:text-left space-y-4">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-800 tracking-tight">
+                Get the latest news!
+              </h2>
+              <p className="text-gray-500 text-base sm:text-lg leading-relaxed max-w-md mx-auto lg:mx-0">
+                Subscribe to our newsletter and stay updated. We promise not to spam your inbox—only good vibes and great updates.
+              </p>
+            </div>
 
+            {/* ডান পাশ: ইনপুট ফর্ম */}
+            <div className="w-full lg:w-1/2">
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert('Thank you for subscribing!');
+                }}
+                className="flex flex-col sm:flex-row gap-3.5 w-full max-w-md mx-auto lg:mx-0"
+              >
+                {/* ইনপুট ফিল্ড উইথ আইকন */}
+                <div className="relative flex-grow">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <svg 
+                      className="h-5 w-5 text-teal-500/70" 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      viewBox="0 0 20 20" 
+                      fill="currentColor" 
+                    >
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </div>
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    className="w-full py-4 pl-12 pr-4 text-gray-700 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:bg-white focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all duration-300 placeholder-gray-400 font-medium shadow-inner"
+                    required
+                  />
+                </div>
+                
+                {/* সাবমিট বাটন */}
+                <button
+                  type="submit"
+                  className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl shadow-md hover:shadow-teal-100 hover:shadow-xl active:scale-[0.98] transition-all duration-300 flex-shrink-0 cursor-pointer tracking-wide uppercase text-sm"
+                >
+                  Sign Up
+                </button>
+              </form>
+              
+              {/* প্রাইভেসি নোট */}
+              <p className="text-xs text-gray-400 mt-4 text-center lg:text-left tracking-wide">
+                We care about your data. Read our{' '}
+                <a href="#" className="underline hover:text-teal-600 transition-colors font-medium">
+                  Privacy Policy
+                </a>.
+              </p>
+            </div>
+
+          </div>
         </div>
       </div>
     </section>
