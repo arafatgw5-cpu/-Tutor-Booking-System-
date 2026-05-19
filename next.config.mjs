@@ -32,8 +32,7 @@ const nextConfig = {
     ],
   },
   
-  // 💡 নোট: Turbopack এর 'turbo' কি (key) টি রিমুভ করা হয়েছে যা ওয়ার্নিং দিচ্ছিল।
-  // Next.js এখন ডিফল্টভাবেই সব স্ট্যান্ডার্ড এক্সটেনশন (.js, .jsx, ইত্যাদি) নিজে থেকেই চিনে নেয়।
+
 };  
 
 export default nextConfig; // ✅ ES Module সিনট্যাক্স
