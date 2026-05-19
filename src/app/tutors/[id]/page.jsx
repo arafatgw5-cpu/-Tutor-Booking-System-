@@ -24,7 +24,7 @@ export default function TutorDetails() {
       const response = await fetch(`/api/tutors/${id}`);
       const data = await response.json();
       
-      // ✅ সেফটি চেক: যদি রেসপন্সে এরর অবজেক্ট আসে তবে স্টেট null থাকবে
+ 
       if (response.ok && data && !data.error) {
         setTutor(data);
       } else {
@@ -91,7 +91,7 @@ export default function TutorDetails() {
                 }
                 alt={tutor.name || "Tutor"}
                 fill
-                unoptimized // ✅ এক্সটার্নাল ইমেজের বিল্ড এরর এড়াতে
+                unoptimized 
                 className="w-full h-full object-cover"
               />
             </div>
@@ -111,7 +111,7 @@ export default function TutorDetails() {
                 <p><span className="font-semibold">Remaining Slots:</span> {tutor.remainingSlots ?? 50}</p>
                 <p>
                   <span className="font-semibold">Session Start:</span>{" "}
-                  {/* ✅ ডেট ক্র্যাশ প্রোটেকশন */}
+               
                   {tutor.sessionStartDate 
                     ? new Date(tutor.sessionStartDate).toLocaleDateString() 
                     : "N/A"}
