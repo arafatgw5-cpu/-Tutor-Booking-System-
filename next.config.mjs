@@ -1,14 +1,35 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // ✅ Proxy Setup (Backend এর সাথে কানেক্ট করার জন্য)
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:5000/api/:path*',
+      },
+    ];
+  },
+
+  // ✅ Image Optimization (বাহিরের ইমেজ লোড করার জন্য)
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "**",
+        protocol: 'https',
+        hostname: 'i.ibb.co.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
       },
     ],
   },
-};
+  
+  // 💡 নোট: Turbopack এর 'turbo' কি (key) টি রিমুভ করা হয়েছে যা ওয়ার্নিং দিচ্ছিল।
+  // Next.js এখন ডিফল্টভাবেই সব স্ট্যান্ডার্ড এক্সটেনশন (.js, .jsx, ইত্যাদি) নিজে থেকেই চিনে নেয়।
+};  
 
-export default nextConfig;
+export default nextConfig; // ✅ ES Module সিনট্যাক্স

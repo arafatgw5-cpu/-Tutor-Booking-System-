@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ ফিক্সড কমেন্ট
 
 const Tutors = () => {
+  const router = useRouter(); // ✅ ফিক্সড কমেন্ট
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,22 +17,25 @@ const Tutors = () => {
     try {
       setLoading(true);
 
-      const response = await fetch(
-        "http://localhost:5000/tutors?limit=4"
-      );
-
+      const response = await fetch("/api/tutors?limit=4");
       const data = await response.json();
 
-      setTutors(data);
+      if (Array.isArray(data)) {
+        setTutors(data);
+      } else {
+        console.error("Expected an array but received:", data);
+        setTutors([]);
+      }
     } catch (error) {
       console.error("Error fetching tutors:", error);
+      setTutors([]);
     } finally {
       setLoading(false);
     }
   };
 
   const handleBookSession = (tutorId) => {
-    console.log("Booking session for tutor:", tutorId);
+    router.push(`/tutors/${tutorId}`);
   };
 
   if (loading) {
@@ -47,10 +52,7 @@ const Tutors = () => {
     <section className="max-w-7xl mx-auto px-4 py-14">
       {/* Heading */}
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-gray-800">
-          Available Tutors
-        </h2>
-
+        <h2 className="text-4xl font-bold text-gray-800">Available Tutors</h2>
         <p className="text-gray-500 mt-3">
           Find experienced tutors and book your session easily.
         </p>
@@ -58,7 +60,7 @@ const Tutors = () => {
 
       {/* Tutors Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {tutors.map((tutor) => (
+        {tutors?.map((tutor) => (
           <div
             key={tutor._id}
             className="bg-white rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 group"
@@ -90,59 +92,45 @@ const Tutors = () => {
 
               <div className="space-y-2 text-sm text-gray-600">
                 <p>
-                  <span className="font-semibold text-gray-800">
-                    Available:
-                  </span>{" "}
+                  <span className="font-semibold text-gray-800">Available:</span>{" "}
                   {tutor.availableDays} | {tutor.availableTime}
                 </p>
 
                 <p>
-                  <span className="font-semibold text-gray-800">
-                    Start Date:
-                  </span>{" "}
-                  {tutor.sessionStartDate}
+                  <span className="font-semibold text-gray-800">Start Date:</span>{" "}
+                  {new Date(tutor.sessionStartDate).toLocaleDateString()}
                 </p>
 
                 <p>
-                  <span className="font-semibold text-gray-800">
-                    Institution:
-                  </span>{" "}
+                  <span className="font-semibold text-gray-800">Institution:</span>{" "}
                   {tutor.institution}
                 </p>
 
                 <p>
-                  <span className="font-semibold text-gray-800">
-                    Experience:
-                  </span>{" "}
+                  <span className="font-semibold text-gray-800">Experience:</span>{" "}
                   {tutor.experience}
                 </p>
 
                 <p>
-                  <span className="font-semibold text-gray-800">
-                    Location:
-                  </span>{" "}
+                  <span className="font-semibold text-gray-800">Location:</span>{" "}
                   {tutor.location}
                 </p>
 
                 <p>
-                  <span className="font-semibold text-gray-800">
-                    Mode:
-                  </span>{" "}
+                  <span className="font-semibold text-gray-800">Mode:</span>{" "}
                   {tutor.teachingMode}
                 </p>
 
                 <p className="text-xl font-bold text-gray-900 pt-2">
                   ৳ {tutor.hourlyFee}
-                  <span className="text-base font-medium text-gray-500">
-                    /hour
-                  </span>
+                  <span className="text-base font-medium text-gray-500">/hour</span>
                 </p>
               </div>
 
               {/* Button */}
               <button
                 onClick={() => handleBookSession(tutor._id)}
-                className="w-full mt-5 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-xl font-semibold transition-all duration-300"
+                className="w-full mt-5 bg-teal-600 hover:bg-teal-700 text-white py-3 rounded-xl font-semibold transition-all duration-300 cursor-pointer"
               >
                 Book Session
               </button>
@@ -154,13 +142,8 @@ const Tutors = () => {
       {/* Empty State */}
       {tutors.length === 0 && !loading && (
         <div className="text-center py-16">
-          <h3 className="text-2xl font-semibold text-gray-700">
-            No Tutors Available
-          </h3>
-
-          <p className="text-gray-500 mt-2">
-            Please check again later.
-          </p>
+          <h3 className="text-2xl font-semibold text-gray-700">No Tutors Available</h3>
+          <p className="text-gray-500 mt-2">Please check again later.</p>
         </div>
       )}
     </section>
