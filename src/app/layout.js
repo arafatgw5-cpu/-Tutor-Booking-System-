@@ -2,6 +2,10 @@ import { Inter, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
+import dns from 'dns'; // ❌ const dns = require("dns") বাদ দিয়ে ES Import ব্যবহার করুন
+
+// ✅ DNS Fix for MongoDB Connection
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 const inter = Inter({ subsets: ["latin"] });
 

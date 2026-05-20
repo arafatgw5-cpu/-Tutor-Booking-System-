@@ -3,9 +3,9 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 
-// ✅ SkeletonCard বাইরে রাখা হয়েছে যাতে অযথাই রি-রেন্ডার না হয়
+
 const SkeletonCard = () => (
   <div className="bg-white rounded-3xl border border-gray-100 p-5 space-y-4 animate-pulse shadow-sm">
     <div className="w-full h-52 bg-gray-200 rounded-2xl"></div>
@@ -22,48 +22,33 @@ const SkeletonCard = () => (
 
 const Tutors = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchTutors();
-  }, []);
+  }, [session]);
 
   const fetchTutors = async () => {
     try {
       setLoading(true);
 
-      // ✅ FIX: টোকেন নেওয়ার জন্য better-auth এর সঠিক মেথড ব্যবহার করা হলো
-      const { data: session } = await authClient.getSession();
-      const token = session?.token || ""; 
-
-      if (!session) {
-        console.warn("No active session found. Requesting without token.");
-      }
-      
-      // ডাইনামিক হেডার সেটআপ (টোকেন থাকলে যাবে, না থাকলে যাবে না)
       const headers = {};
-      if (token) {
-        headers["Authorization"] = `Bearer ${token}`;
+      if (session?.user) {
+        headers["Authorization"] = `Bearer ${session.token || ""}`;
       }
-      
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=4`, {
-        headers: headers,
+
+      const response = await fetch(`/api/tutors?limit=4`, {
+        headers,
       });
 
-      // নেটওয়ার্ক রেসপন্স ঠিক আছে কিনা চেক করা
       if (!response.ok) {
         throw new Error(`Failed to fetch tutors: ${response.statusText}`);
       }
 
       const data = await response.json();
-
-      if (Array.isArray(data)) {
-        setTutors(data);
-      } else {
-        console.error("Expected an array but received:", data);
-        setTutors([]);
-      }
+      setTutors(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error fetching tutors:", error);
       setTutors([]);
@@ -121,7 +106,7 @@ const Tutors = () => {
                     }
                     alt={tutor.name || "Tutor"}
                     fill
-                    unoptimized // Remove this once you configure remotePatterns in next.config.js!
+                    unoptimized
                     className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   <span className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-teal-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm border border-teal-100 uppercase tracking-wider">

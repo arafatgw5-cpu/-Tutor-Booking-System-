@@ -1,11 +1,11 @@
 // src/proxy.js
 
 import { NextResponse } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function proxy(request) {
-  // better-auth session cookie
-  const sessionCookie =
-    request.cookies.get("better-auth.session_token")?.value;
+  // Use Better Auth's built-in helper instead of manually guessing the cookie name
+  const sessionCookie = getSessionCookie(request);
 
   if (!sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));

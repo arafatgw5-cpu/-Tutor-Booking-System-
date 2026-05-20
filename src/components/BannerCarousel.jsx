@@ -52,7 +52,7 @@ export default function BannerCarousel() {
   const progressRef = useRef(0);
   const lastTimeRef = useRef(0);
 
-  const DURATION = 5000;
+  const DURATION = 3000;
 
   const nextSlide = useCallback(() => {
     setCurrent((prev) => (prev + 1) % slides.length);

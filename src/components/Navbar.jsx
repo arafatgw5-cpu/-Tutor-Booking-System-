@@ -5,31 +5,53 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 
+const NAV_LINKS = {
+  guest: [
+    { href: "/services", label: "Services" },
+    { href: "/about", label: "About" },
+    { href: "/contact", label: "Contact" },
+  ],
+  user: [
+    { href: "/tutors", label: "Tutors" },
+    { href: "/add-tutor", label: "Add Tutors" },
+    { href: "/my-tutors", label: "My Tutors" },
+    { href: "/booked-sessions", label: "My Booked Session" },
+  ],
+};
+
 const Navbar = () => {
   const router = useRouter();
-  const pathname = usePathname(); // Get current route
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Better Auth session
+  // Better Auth সেশন হুক
   const { data: session, isPending } = useSession();
   const user = session?.user;
 
+  // সেফ লগআউট হ্যান্ডলার
   const handleLogout = async () => {
-    await signOut();
-    window.location.href = "/login";
+    try {
+      await signOut();
+      setIsMobileMenuOpen(false);
+      router.push("/login");
+      router.refresh(); // সার্ভার কম্পোনেন্টের ক্যাশ রিফ্রেশ করার জন্য
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
-  // Helper functions for dynamic classes based on active route
+  // একটিভ রুট চেকার
   const isActive = (path) => pathname === path;
 
-  const desktopLinkClass = (path) =>
+  // ডায়নামিক ক্লাসের ফাংশনসমূহ
+  const getDesktopClass = (path) =>
     `px-3 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
       isActive(path)
         ? "text-teal-600 bg-teal-50 shadow-sm"
         : "text-gray-600 hover:text-teal-600 hover:bg-teal-50/50"
     }`;
 
-  const mobileLinkClass = (path) =>
+  const getMobileClass = (path) =>
     `block px-3 py-2.5 rounded-xl text-base font-medium transition-all ${
       isActive(path)
         ? "text-teal-600 bg-teal-50 shadow-sm border-l-4 border-teal-500"
@@ -41,7 +63,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo (সবসময় থাকবে) */}
+          {/* Logo */}
           <div className="flex-shrink-0">
             <Link
               href="/"
@@ -53,52 +75,36 @@ const Navbar = () => {
 
           {/* Navigation Links - Desktop */}
           <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
-            <Link href="/" className={desktopLinkClass("/")}>
+            <Link href="/" className={getDesktopClass("/")}>
               Home
             </Link>
 
             {isPending ? (
-              // Loading Skeleton for Links
+              /* লিংক লোডিং কঙ্কাল (Skeleton) */
               <div className="flex space-x-2 px-2">
                 <div className="h-8 w-20 bg-gray-100 rounded-xl animate-pulse" />
                 <div className="h-8 w-24 bg-gray-100 rounded-xl animate-pulse" />
               </div>
             ) : user ? (
-              // Logged In User Only
-              <>
-                <Link href="/tutors" className={desktopLinkClass("/tutors")}>
-                  Tutors
+              /* শুধুমাত্র লগইন করা ইউজারদের জন্য */
+              NAV_LINKS.user.map((link) => (
+                <Link key={link.href} href={link.href} className={getDesktopClass(link.href)}>
+                  {link.label}
                 </Link>
-                <Link href="/add-tutor" className={desktopLinkClass("/add-tutor")}>
-                  Add Tutors
-                </Link>
-                <Link href="/my-tutors" className={desktopLinkClass("/my-tutors")}>
-                  My Tutors
-                </Link>
-                <Link href="/booked-sessions" className={desktopLinkClass("/booked-sessions")}>
-                  My Booked Session
-                </Link>
-              </>
+              ))
             ) : (
-              // Guest User Only
-              <>
-                <Link href="/services" className={desktopLinkClass("/services")}>
-                  Services
+              /* গেস্ট ইউজারদের জন্য */
+              NAV_LINKS.guest.map((link) => (
+                <Link key={link.href} href={link.href} className={getDesktopClass(link.href)}>
+                  {link.label}
                 </Link>
-                <Link href="/about" className={desktopLinkClass("/about")}>
-                  About
-                </Link>
-                <Link href="/contact" className={desktopLinkClass("/contact")}>
-                  Contact
-                </Link>
-              </>
+              ))
             )}
           </div>
 
           {/* Auth Buttons - Desktop */}
           <div className="hidden md:flex items-center space-x-4">
             {isPending ? (
-              // Loading Skeleton for Auth
               <div className="flex items-center space-x-3">
                 <div className="h-9 w-9 rounded-full bg-gray-100 animate-pulse" />
                 <div className="h-9 w-20 bg-gray-100 rounded-xl animate-pulse" />
@@ -159,6 +165,8 @@ const Navbar = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-xl text-gray-600 hover:bg-gray-50 focus:outline-none transition-colors duration-200"
+              aria-label="Toggle menu"
+              aria-expanded={isMobileMenuOpen}
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isMobileMenuOpen ? (
@@ -174,8 +182,10 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-1 shadow-inner">
-          <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/")}>Home</Link>
+        <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-1 shadow-inner animate-in fade-in slide-in-from-top-2 duration-200">
+          <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={getMobileClass("/")}>
+            Home
+          </Link>
 
           {isPending ? (
              <div className="px-3 py-2 space-y-3">
@@ -184,16 +194,19 @@ const Navbar = () => {
              </div>
           ) : user ? (
             <>
-              <Link href="/tutors" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/tutors")}>Tutors</Link>
-              <Link href="/add-tutor" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/add-tutor")}>Add Tutors</Link>
-              <Link href="/my-tutors" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/my-tutors")}>My Tutors</Link>
-              <Link href="/booked-sessions" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/booked-sessions")}>My Booked Session</Link>
+              {NAV_LINKS.user.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getMobileClass(link.href)}
+                >
+                  {link.label}
+                </Link>
+              ))}
               <div className="pt-4 border-t border-gray-100 mt-2">
                 <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMobileMenuOpen(false);
-                  }}
+                  onClick={handleLogout}
                   className="w-full text-center px-4 py-2.5 text-base font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-all"
                 >
                   Logout
@@ -202,9 +215,16 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link href="/services" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/services")}>Services</Link>
-              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/about")}>About</Link>
-              <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/contact")}>Contact</Link>
+              {NAV_LINKS.guest.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={getMobileClass(link.href)}
+                >
+                  {link.label}
+                </Link>
+              ))}
               <div className="pt-4 border-t border-gray-100 mt-2 grid grid-cols-2 gap-3">
                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center px-4 py-2.5 text-base font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-xl shadow-sm transition-all">
                   Login
