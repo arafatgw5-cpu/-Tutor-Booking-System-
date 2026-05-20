@@ -22,7 +22,7 @@ const EditTutorPage = ({ params }) => {
   useEffect(() => {
     const fetchSingleTutor = async () => {
       try {
-        const res = await fetch(`/api/tutors/${tutorId}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${tutorId}`);
 
         if (!res.ok) {
           throw new Error("Tutor not found");
@@ -58,7 +58,7 @@ const EditTutorPage = ({ params }) => {
   // update tutor
   const handleUpdate = async () => {
     try {
-      const res = await fetch(`/api/tutors/${tutorId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${tutorId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

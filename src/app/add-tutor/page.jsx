@@ -69,7 +69,7 @@ const AddTutor = () => {
         remainingSlots: Number(formData.totalSlots)
       };
 
-      const response = await fetch('/api/tutors', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(tutorData),
@@ -78,7 +78,7 @@ const AddTutor = () => {
       if (response.ok) {
         setSuccess(true);
         setTimeout(() => {
-          router.push('/my-tutors');
+          router.push(`${process.env.NEXT_PUBLIC_URL}/my-tutors`);
         }, 1500);
       } else {
         setError("Failed to add tutor! Please try again.");

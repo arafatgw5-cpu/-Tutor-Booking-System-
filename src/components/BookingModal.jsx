@@ -55,7 +55,7 @@ const BookingModal = ({ isOpen, onClose, tutor }) => {
         teachingMode: tutor.teachingMode,
       };
 
-      const response = await fetch("http://localhost:5000/api/bookings", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(bookingData),

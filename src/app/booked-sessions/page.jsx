@@ -14,7 +14,8 @@ export default function BookedSessions() {
 
   useEffect(() => {
     if (!isPending && !user) {
-      router.push("/login");
+      // router.push("/login");
+      window.location.href = `${process.env.NEXT_PUBLIC_URL}/login`;
       return;
     }
 
@@ -27,7 +28,7 @@ export default function BookedSessions() {
   const fetchBookings = async (email) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/booked-sessions/${email}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/booked-sessions/${email}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         cache: 'no-store' 
@@ -50,7 +51,7 @@ export default function BookedSessions() {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/bookings/${bookingId}`, {
         method: "DELETE",
       });
 

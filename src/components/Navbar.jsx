@@ -16,7 +16,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await signOut();
-    router.push("/login");
+    window.location.href = "/login";
   };
 
   // Helper functions for dynamic classes based on active route

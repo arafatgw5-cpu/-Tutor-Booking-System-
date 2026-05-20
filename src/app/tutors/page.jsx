@@ -22,7 +22,11 @@ const AllTutors = () => {
   const fetchTutors = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/tutors?limit=8");
+      const response = await fetch(`  ${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=4`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const data = await response.json();
 
       if (Array.isArray(data)) {

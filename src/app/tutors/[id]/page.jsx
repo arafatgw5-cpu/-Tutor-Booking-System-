@@ -21,7 +21,7 @@ export default function TutorDetails() {
   const fetchTutorDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/tutors/${id}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${id}`);
       const data = await response.json();
       
  

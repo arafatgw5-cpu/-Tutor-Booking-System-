@@ -38,7 +38,7 @@ export default function LoginPage() {
         email: formData.email,
         password: formData.password,
       });
-
+   console.log(error);
       if (error) {
         setError(error.message);
         toast.error(error.message);
@@ -46,8 +46,9 @@ export default function LoginPage() {
       }
 
       toast.success("Login successful!");
-      router.push("/");
-      router.refresh();
+      // router.push("/");
+      // router.refresh();
+      window.location.href = "/";
     } catch (err) {
       console.log(err);
       toast.error("Something went wrong");

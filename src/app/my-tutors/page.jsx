@@ -12,10 +12,10 @@ const MyTutorsPage = () => {
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch tutors from Database using Better Auth email
+  
   useEffect(() => {
     if (!isPending && !user) {
-      router.push('/login');
+      router.push(`${process.env.NEXT_PUBLIC_URL}/login`);
       return;
     }
 
@@ -26,8 +26,8 @@ const MyTutorsPage = () => {
 
   const fetchMyTutors = async (email) => {
     try {
-      // ✅ Proxy ব্যবহার: '/api' দিয়ে ডাটাবেস থেকে আনা
-      const response = await fetch(`/api/my-tutors/${email}`);
+    
+      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/my-tutors/${email}`);
       const data = await response.json();
       setTutors(data);
     } catch (error) {
@@ -40,7 +40,7 @@ const MyTutorsPage = () => {
   const handleDelete = async (tutorId) => {
     if (!confirm('Are you sure you want to delete this tutor?')) return;
     try {
-      await fetch(`/api/tutors/${tutorId}`, { method: 'DELETE' });
+      await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${tutorId}`, { method: 'DELETE' });
       setTutors(prev => prev.filter(t => t._id !== tutorId));
     } catch (error) {
       console.error('Error deleting tutor:', error);
@@ -48,7 +48,7 @@ const MyTutorsPage = () => {
   };
 
   const handleEdit = (tutorId) => {
-    router.push(`/edit-tutor/${tutorId}`);
+    router.push(`${process.env.NEXT_PUBLIC_URL}/edit-tutor/${tutorId}`);
   };
 
   if (isPending || loading) {
@@ -73,7 +73,7 @@ const MyTutorsPage = () => {
             <p className="text-gray-600 mt-1">Managing tutors for: {user.email}</p>
           </div>
           <button
-            onClick={() => router.push('/add-tutor')}
+            onClick={() => router.push(`${process.env.NEXT_PUBLIC_URL}/add-tutor`)}
             className="px-6 py-2.5 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors shadow-md"
           >
             + Add New Tutor
@@ -86,7 +86,7 @@ const MyTutorsPage = () => {
             <h3 className="text-xl font-semibold text-gray-800 mb-2">No tutors added yet</h3>
             <p className="text-gray-600 mb-6">Start by adding your first tutor!</p>
             <button
-              onClick={() => router.push('/add-tutor')}
+              onClick={() => router.push(`${process.env.NEXT_PUBLIC_URL}/add-tutor`)}
               className="px-6 py-2.5 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors"
             >
               Add Your First Tutor
