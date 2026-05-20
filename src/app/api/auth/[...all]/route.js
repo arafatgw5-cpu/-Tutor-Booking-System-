@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
-import { jwtVerify, SignJWT } from 'jose';
+import { SignJWT } from 'jose';
 
 const secret = new TextEncoder().encode(
   process.env.BETTER_AUTH_SECRET || 'test-secret-key'
 );
+
+// In-memory user storage (replace with DB in production)
+const users = new Map();
 
 export async function GET(request) {
   try {
@@ -36,15 +39,42 @@ export async function POST(request) {
         );
       }
 
-      // Create simple JWT token
-      const token = await new SignJWT({ email: body.email })
+      // Check if user already exists
+      if (users.has(body.email)) {
+        return NextResponse.json(
+          { error: 'User already exists' },
+          { status: 400 }
+        );
+      }
+
+      // Store user data
+      const userId = Date.now().toString();
+      users.set(body.email, {
+        id: userId,
+        email: body.email,
+        name: body.name || 'User',
+        password: body.password, // In production, hash this!
+        photoUrl: body.photoUrl || null,
+      });
+
+      // Create JWT token
+      const token = await new SignJWT({
+        email: body.email,
+        id: userId,
+        name: body.name || 'User'
+      })
         .setProtectedHeader({ alg: 'HS256' })
         .setExpirationTime('7d')
         .sign(secret);
 
       const response = NextResponse.json(
         {
-          user: { email: body.email, id: Date.now() },
+          user: {
+            email: body.email,
+            id: userId,
+            name: body.name || 'User',
+            image: body.photoUrl || null
+          },
           token
         },
         { status: 200 }
@@ -71,14 +101,32 @@ export async function POST(request) {
         );
       }
 
-      const token = await new SignJWT({ email: body.email })
+      const user = users.get(body.email);
+
+      if (!user || user.password !== body.password) {
+        return NextResponse.json(
+          { error: 'Invalid email or password' },
+          { status: 401 }
+        );
+      }
+
+      const token = await new SignJWT({
+        email: user.email,
+        id: user.id,
+        name: user.name
+      })
         .setProtectedHeader({ alg: 'HS256' })
         .setExpirationTime('7d')
         .sign(secret);
 
       const response = NextResponse.json(
         {
-          user: { email: body.email, id: Date.now() },
+          user: {
+            email: user.email,
+            id: user.id,
+            name: user.name,
+            image: user.photoUrl
+          },
           token
         },
         { status: 200 }

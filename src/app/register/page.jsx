@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { authClient } from "@/lib/auth-client";
 import { Inter, Playfair_Display } from "next/font/google";
 
 const inter = Inter({
@@ -29,7 +28,6 @@ export default function RegisterPage() {
   });
   const [errors, setErrors] = useState({});
 
-  // PASSWORD VALIDATION LOGIC
   const validatePassword = (pass) => {
     const errs = [];
     if (pass.length < 6) errs.push("At least 6 characters required");
@@ -38,71 +36,102 @@ export default function RegisterPage() {
     return errs;
   };
 
-  // EMAIL REGISTER
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({}); // এরর রিসেট
-    
+    setErrors({});
+
     const passwordErrors = validatePassword(formData.password);
     if (passwordErrors.length > 0) {
       setErrors({ password: passwordErrors });
-      toast.error("Please follow password rules");
+      toast.error("Password does not meet requirements");
+      return;
+    }
+
+    if (!formData.name.trim()) {
+      setErrors({ name: "Name is required" });
+      toast.error("Please enter your name");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { data, error } = await authClient.signUp.email({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        image: formData.photoUrl || undefined,
+      const response = await fetch("/api/auth/sign-up/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          photoUrl: formData.photoUrl,
+        }),
       });
 
-      if (error) {
-        toast.error(error.message || "Signup failed");
-        setErrors({ general: error.message || "Something went wrong on the server." });
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error(data.error || "Registration failed");
         return;
       }
 
-      toast.success("Account created successfully!");
-      router.push("/login");
+      toast.success("Account created successfully! Redirecting to login...");
+      setTimeout(() => router.push("/login"), 1000);
     } catch (err) {
       console.error("Registration Error:", err);
-      toast.error("Network or Server error");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // GOOGLE REGISTER
   const handleGoogle = async () => {
-    try {
-      setLoading(true);
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/", // সফল লগইনের পর যেখানে রিডাইরেক্ট হবে
-      });
-    } catch (err) {
-      console.error("Google Auth Error:", err);
-      toast.error("Google signup failed");
-    } finally {
-      setLoading(false);
-    }
+    toast.error("Google sign-up coming soon");
   };
 
   return (
     <div className={`min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center px-4 py-10 ${inter.className}`}>
       <div className="w-full max-w-6xl rounded-3xl overflow-hidden border border-gray-200 bg-white shadow-xl grid lg:grid-cols-2 relative z-10">
-        
-        {/* LEFT SIDE (Form Panel) */}
-        <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-center relative bg-white order-last lg:order-first">
-          
+
+        {/* LEFT SIDE (Branding Panel - Teal Background) */}
+        <div className="hidden lg:flex relative overflow-hidden bg-teal-800 p-14 flex-col justify-between text-white">
+          <div className="absolute -top-24 -left-24 w-72 h-72 bg-teal-500/30 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-400/20 blur-[100px] rounded-full pointer-events-none" />
+
+          <div className="relative z-10">
+            <span className="text-teal-300 text-sm tracking-[0.3em] uppercase font-medium">
+              Tutor Booking Platform
+            </span>
+            <h1 className={`mt-6 text-5xl leading-tight text-white ${playfair.className}`}>
+              Join Our<br />Community.
+            </h1>
+            <p className="mt-6 text-teal-100/80 text-sm leading-relaxed max-w-sm">
+              Create an account to book expert tutors, manage your sessions, and continue your learning journey.
+            </p>
+          </div>
+
+          <div className="relative z-10 space-y-4">
+            {[
+              "Book tutors instantly",
+              "Manage your schedule",
+              "Learn from experts",
+              "Get affordable tutoring",
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
+                <span className="text-teal-50 text-sm font-medium">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT SIDE (Form Panel) */}
+        <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-center relative bg-white">
           {/* Mobile heading */}
           <div className="lg:hidden mb-10 text-center">
             <h1 className={`text-4xl text-teal-800 ${playfair.className}`}>Create Account</h1>
-            <p className="mt-3 text-sm text-gray-500">Join the tutor booking platform</p>
+            <p className="mt-3 text-sm text-gray-500">Join us today</p>
           </div>
 
           {/* Desktop heading */}
@@ -112,48 +141,21 @@ export default function RegisterPage() {
             <p className="mt-3 text-sm text-gray-500">Register to start booking tutors</p>
           </div>
 
-          {/* GENERAL ERROR */}
-          {errors.general && (
-            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              {errors.general}
-            </div>
-          )}
-
-          {/* GOOGLE BUTTON */}
-          <button
-            type="button"
-            onClick={handleGoogle}
-            disabled={loading}
-            className="group flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 font-medium transition-all hover:bg-gray-50 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
-          >
-            <GoogleIcon />
-            <span>{loading ? "Please wait..." : "Continue with Google"}</span>
-          </button>
-
-          {/* Divider */}
-          <div className="my-8 flex items-center gap-4">
-            <div className="h-[1px] flex-1 bg-gray-200" />
-            <span className="text-xs uppercase tracking-[0.2em] text-gray-400 font-medium">Or</span>
-            <div className="h-[1px] flex-1 bg-gray-200" />
-          </div>
-
           {/* FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            
+
             {/* NAME */}
             <div>
               <label className="mb-2 block text-[11px] uppercase tracking-[0.18em] text-gray-500 font-medium">Full Name</label>
               <input
                 type="text"
                 required
-                placeholder="Your Full Name"
+                placeholder="Your full name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 shadow-sm"
               />
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
             </div>
 
             {/* EMAIL */}
@@ -171,10 +173,7 @@ export default function RegisterPage() {
 
             {/* PHOTO URL */}
             <div>
-              <label className="mb-2 flex justify-between text-[11px] uppercase tracking-[0.18em] text-gray-500 font-medium">
-                <span>Photo URL</span>
-                <span className="text-gray-400 lowercase tracking-normal">(Optional)</span>
-              </label>
+              <label className="mb-2 block text-[11px] uppercase tracking-[0.18em] text-gray-500 font-medium">Photo URL (Optional)</label>
               <input
                 type="url"
                 placeholder="https://example.com/photo.jpg"
@@ -195,29 +194,12 @@ export default function RegisterPage() {
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 shadow-sm"
               />
-
-              {/* REAL-TIME PASWORD CHECKLIST (Clean visual guide) */}
-              {formData.password.length > 0 && (
-                <div className="mt-3 space-y-1.5 text-xs font-medium">
-                  <p className={formData.password.length >= 6 ? "text-teal-600" : "text-gray-400"}>
-                    • At least 6 characters
-                  </p>
-                  <p className={/[A-Z]/.test(formData.password) ? "text-teal-600" : "text-gray-400"}>
-                    • One uppercase letter
-                  </p>
-                  <p className={/[a-z]/.test(formData.password) ? "text-teal-600" : "text-gray-400"}>
-                    • One lowercase letter
-                  </p>
-                </div>
-              )}
-
-              {/* SUBMITTED PASSWORD ERRORS (Shows only after trying to submit) */}
-              {errors.password?.length > 0 && (
-                <div className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600">
+              {errors.password && (
+                <ul className="text-red-500 text-sm mt-2 space-y-1">
                   {errors.password.map((err, i) => (
-                    <p key={i}>• {err}</p>
+                    <li key={i}>• {err}</li>
                   ))}
-                </div>
+                </ul>
               )}
             </div>
 
@@ -225,46 +207,23 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 rounded-xl bg-teal-600 py-3.5 text-sm font-semibold text-white transition-all hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-600/30 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
+              className="w-full rounded-xl bg-teal-600 py-3.5 text-sm font-semibold text-white transition-all hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-600/30 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
             >
               {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 
-          {/* BOTTOM */}
+          {/* LOGIN LINK */}
           <p className="mt-8 text-center text-sm text-gray-500">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-teal-600 transition-colors hover:text-teal-700 underline-offset-4 hover:underline">
-              Login Here
+            <Link
+              href="/login"
+              className="font-semibold text-teal-600 transition-colors hover:text-teal-700 underline-offset-4 hover:underline"
+            >
+              Login
             </Link>
           </p>
         </div>
-
-        {/* RIGHT SIDE (Branding Panel) */}
-        <div className="hidden lg:flex relative overflow-hidden bg-teal-800 p-14 flex-col justify-between text-white order-first lg:order-last">
-          <div className="absolute -top-24 -left-24 w-72 h-72 bg-teal-500/30 blur-[100px] rounded-full pointer-events-none" />
-          <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-400/20 blur-[100px] rounded-full pointer-events-none" />
-
-          <div className="relative z-10">
-            <span className="text-teal-300 text-sm tracking-[0.3em] uppercase font-medium">Tutor Booking Platform</span>
-            <h1 className={`mt-6 text-5xl leading-tight text-white ${playfair.className}`}>
-              Start Your <br /> Learning Journey.
-            </h1>
-            <p className="mt-6 text-teal-100/80 text-sm leading-relaxed max-w-sm">
-              Create your account to connect with expert tutors, book sessions, and improve your skills anytime.
-            </p>
-          </div>
-
-          <div className="relative z-10 space-y-4">
-            {["Find expert tutors", "Book sessions instantly", "Google signup support", "Modern & secure platform"].map((item) => (
-              <div key={item} className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
-                <span className="text-teal-50 text-sm font-medium">{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
       </div>
     </div>
   );
