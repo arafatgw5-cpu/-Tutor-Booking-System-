@@ -1,15 +1,19 @@
 // src/lib/auth.js
-const dns = require("node:dns");
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
-
+import dns from "node:dns";
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 
+// Set custom DNS servers (useful if your hosting provider has DNS resolution issues)
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
+// Safety check: Ensure the environment variable is loaded
+if (!process.env.MONGODB_URI) {
+  throw new Error("MONGODB_URI is missing from your environment variables.");
+}
+
 // MongoDB Connection
 const client = new MongoClient(process.env.MONGODB_URI);
-
-// Database Name
 const db = client.db("tutors-finder");
 
 // Better Auth Config
@@ -23,7 +27,7 @@ export const auth = betterAuth({
     enabled: true,
   },
 
-  // Social Login Example
+  // Social Login
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID,

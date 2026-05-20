@@ -6,23 +6,30 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
+import { Inter, Playfair_Display } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600"],
+});
 
 export default function LoginPage() {
   const router = useRouter();
-
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
   const [error, setError] = useState("");
 
   // EMAIL LOGIN
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setLoading(true);
     setError("");
 
@@ -39,7 +46,6 @@ export default function LoginPage() {
       }
 
       toast.success("Login successful!");
-
       router.push("/");
       router.refresh();
     } catch (err) {
@@ -54,7 +60,6 @@ export default function LoginPage() {
   const handleGoogle = async () => {
     try {
       setLoading(true);
-
       await authClient.signIn.social({
         provider: "google",
         callbackURL: "/",
@@ -69,44 +74,36 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen bg-[#050816] text-white flex items-center justify-center px-4 py-10"
-      style={{ fontFamily: "'Inter', sans-serif" }}
+      className={`min-h-screen bg-gray-50 text-gray-900 flex items-center justify-center px-4 py-10 ${inter.className}`}
     >
-      {/* Fonts */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap');
-      `}</style>
-
-      <div className="w-full max-w-6xl rounded-3xl overflow-hidden border border-white/10 bg-white/[0.03] backdrop-blur-xl shadow-2xl grid lg:grid-cols-2">
-
-        {/* LEFT SIDE */}
-        <div className="hidden lg:flex relative overflow-hidden bg-[#0b1020] p-14 flex-col justify-between">
-
-          {/* Glow */}
-          <div className="absolute top-[-100px] left-[-100px] w-72 h-72 bg-sky-500/10 blur-3xl rounded-full" />
-          <div className="absolute bottom-[-120px] right-[-120px] w-80 h-80 bg-cyan-400/10 blur-3xl rounded-full" />
+      <div className="w-full max-w-6xl rounded-3xl overflow-hidden border border-gray-200 bg-white shadow-xl grid lg:grid-cols-2 relative z-10">
+        
+        {/* LEFT SIDE (Branding Panel - Teal Background) */}
+        <div className="hidden lg:flex relative overflow-hidden bg-teal-800 p-14 flex-col justify-between text-white">
+          {/* Glow Effects */}
+          <div className="absolute -top-24 -left-24 w-72 h-72 bg-teal-500/30 blur-[100px] rounded-full pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-teal-400/20 blur-[100px] rounded-full pointer-events-none" />
 
           <div className="relative z-10">
-            <span className="text-sky-400 text-sm tracking-[0.3em] uppercase">
+            <span className="text-teal-300 text-sm tracking-[0.3em] uppercase font-medium">
               Tutor Booking Platform
             </span>
 
             <h1
-              className="mt-6 text-5xl leading-tight text-white"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className={`mt-6 text-5xl leading-tight text-white ${playfair.className}`}
             >
               Find Your
               <br />
               Perfect Tutor.
             </h1>
 
-            <p className="mt-6 text-white/50 text-sm leading-7 max-w-sm">
-              Login to book expert tutors, manage your sessions,
-              and continue your learning journey easily.
+            <p className="mt-6 text-teal-100/80 text-sm leading-relaxed max-w-sm">
+              Login to book expert tutors, manage your sessions, and continue
+              your learning journey easily.
             </p>
           </div>
 
-          <div className="relative z-10 space-y-5">
+          <div className="relative z-10 space-y-4">
             {[
               "Book tutors instantly",
               "Google login support",
@@ -114,51 +111,48 @@ export default function LoginPage() {
               "Fast & responsive learning platform",
             ].map((item) => (
               <div key={item} className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-sky-400" />
-                <span className="text-white/60 text-sm">{item}</span>
+                <div className="w-2 h-2 rounded-full bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
+                <span className="text-teal-50 text-sm font-medium">{item}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="p-7 sm:p-10 lg:p-14 flex flex-col justify-center">
-
+        {/* RIGHT SIDE (Form Panel - White Background) */}
+        <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-center relative bg-white">
           {/* Mobile heading */}
           <div className="lg:hidden mb-10 text-center">
             <h1
-              className="text-4xl text-white"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className={`text-4xl text-teal-800 ${playfair.className}`}
             >
               Welcome Back
             </h1>
-
-            <p className="mt-3 text-sm text-white/50">
+            <p className="mt-3 text-sm text-gray-500">
               Login to continue learning
             </p>
           </div>
 
           {/* Desktop heading */}
           <div className="hidden lg:block mb-10">
-            <span className="text-xs uppercase tracking-[0.25em] text-sky-400">
+            <span className="text-xs uppercase tracking-[0.25em] text-teal-600 font-medium">
               Student Access
             </span>
-
             <h2
-              className="mt-3 text-3xl text-white"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className={`mt-3 text-3xl text-gray-900 ${playfair.className}`}
             >
               Login Now
             </h2>
-
-            <p className="mt-3 text-sm text-white/50">
+            <p className="mt-3 text-sm text-gray-500">
               Login to continue booking tutors
             </p>
           </div>
 
-          {/* Error */}
+          {/* Error Message */}
           {error && (
-            <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
               {error}
             </div>
           )}
@@ -168,68 +162,56 @@ export default function LoginPage() {
             type="button"
             onClick={handleGoogle}
             disabled={loading}
-            className="group flex items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/80 transition hover:bg-white/[0.06] hover:border-white/20 disabled:opacity-50"
+            className="group flex items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3.5 text-sm text-gray-700 font-medium transition-all hover:bg-gray-50 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             <GoogleIcon />
-
             <span>
-              {loading ? "Loading..." : "Continue with Google Account"}
+              {loading ? "Please wait..." : "Continue with Google"}
             </span>
           </button>
 
           {/* Divider */}
           <div className="my-8 flex items-center gap-4">
-            <div className="h-px flex-1 bg-white/10" />
-
-            <span className="text-xs uppercase tracking-[0.2em] text-white/30">
+            <div className="h-[1px] flex-1 bg-gray-200" />
+            <span className="text-xs uppercase tracking-[0.2em] text-gray-400 font-medium">
               Or
             </span>
-
-            <div className="h-px flex-1 bg-white/10" />
+            <div className="h-[1px] flex-1 bg-gray-200" />
           </div>
 
           {/* FORM */}
           <form onSubmit={handleSubmit} className="space-y-5">
-
             {/* Email */}
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">
+              <label className="mb-2 block text-[11px] uppercase tracking-[0.18em] text-gray-500 font-medium">
                 Email Address
               </label>
-
               <input
                 type="email"
                 required
                 placeholder="student@example.com"
                 value={formData.email}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    email: e.target.value,
-                  })
+                  setFormData({ ...formData, email: e.target.value })
                 }
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition focus:border-sky-400 focus:bg-white/[0.05]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 shadow-sm"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="mb-2 block text-xs uppercase tracking-[0.18em] text-white/40">
+              <label className="mb-2 block text-[11px] uppercase tracking-[0.18em] text-gray-500 font-medium">
                 Password
               </label>
-
               <input
                 type="password"
                 required
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
+                  setFormData({ ...formData, password: e.target.value })
                 }
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white placeholder:text-white/20 outline-none transition focus:border-sky-400 focus:bg-white/[0.05]"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 shadow-sm"
               />
             </div>
 
@@ -237,7 +219,7 @@ export default function LoginPage() {
             <div className="flex justify-end">
               <Link
                 href="/forgot-password"
-                className="text-sm text-sky-400/80 transition hover:text-sky-300"
+                className="text-xs font-medium text-teal-600 transition-colors hover:text-teal-700 underline-offset-4 hover:underline"
               >
                 Forgot your password?
               </Link>
@@ -247,18 +229,18 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-sky-400 py-3 text-sm font-semibold text-[#06111f] transition hover:bg-sky-300 disabled:opacity-50"
+              className="w-full rounded-xl bg-teal-600 py-3.5 text-sm font-semibold text-white transition-all hover:bg-teal-700 hover:shadow-lg hover:shadow-teal-600/30 disabled:opacity-50 disabled:cursor-not-allowed transform active:scale-[0.98]"
             >
               {loading ? "Signing in..." : "Login Now"}
             </button>
           </form>
 
           {/* Bottom */}
-          <p className="mt-8 text-center text-sm text-white/40">
+          <p className="mt-8 text-center text-sm text-gray-500">
             New to Tutors-Finder?{" "}
             <Link
               href="/register"
-              className="text-sky-400 transition hover:text-sky-300"
+              className="font-semibold text-teal-600 transition-colors hover:text-teal-700 underline-offset-4 hover:underline"
             >
               Create Account
             </Link>
