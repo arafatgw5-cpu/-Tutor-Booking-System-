@@ -41,7 +41,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Logo (সবসময় থাকবে) */}
+          {/* Logo (সবসময় থাকবে) */}
           <div className="flex-shrink-0">
             <Link
               href="/"
@@ -56,9 +56,6 @@ const Navbar = () => {
             <Link href="/" className={desktopLinkClass("/")}>
               Home
             </Link>
-            <Link href="/tutors" className={desktopLinkClass("/tutors")}>
-              Tutors
-            </Link>
 
             {isPending ? (
               // Loading Skeleton for Links
@@ -69,6 +66,9 @@ const Navbar = () => {
             ) : user ? (
               // Logged In User Only
               <>
+                <Link href="/tutors" className={desktopLinkClass("/tutors")}>
+                  Tutors
+                </Link>
                 <Link href="/add-tutor" className={desktopLinkClass("/add-tutor")}>
                   Add Tutors
                 </Link>
@@ -176,7 +176,6 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-1 shadow-inner">
           <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/")}>Home</Link>
-          <Link href="/tutors" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/tutors")}>Tutors</Link>
 
           {isPending ? (
              <div className="px-3 py-2 space-y-3">
@@ -185,6 +184,7 @@ const Navbar = () => {
              </div>
           ) : user ? (
             <>
+              <Link href="/tutors" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/tutors")}>Tutors</Link>
               <Link href="/add-tutor" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/add-tutor")}>Add Tutors</Link>
               <Link href="/my-tutors" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/my-tutors")}>My Tutors</Link>
               <Link href="/booked-sessions" onClick={() => setIsMobileMenuOpen(false)} className={mobileLinkClass("/booked-sessions")}>My Booked Session</Link>

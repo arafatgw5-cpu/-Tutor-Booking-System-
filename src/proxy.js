@@ -3,10 +3,11 @@
 import { NextResponse } from "next/server";
 
 export async function proxy(request) {
-  const token = request.cookies.get("token")?.value;
+  // better-auth session cookie
+  const sessionCookie =
+    request.cookies.get("better-auth.session_token")?.value;
 
-  // login না থাকলে login page এ যাবে
-  if (!token) {
+  if (!sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -15,6 +16,10 @@ export async function proxy(request) {
 
 export const config = {
   matcher: [
-    "/services/:path*",
+    "/booked-sessions/:path*",
+    "/tutors/:path*",
+    "/add-tutor/:path*",
+    "/my-tutors/:path*",
+    "/update-tutor/:path*",
   ],
 };
