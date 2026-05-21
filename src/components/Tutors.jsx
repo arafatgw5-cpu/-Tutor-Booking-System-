@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 
-
 const SkeletonCard = () => (
   <div className="bg-white rounded-3xl border border-gray-100 p-5 space-y-4 animate-pulse shadow-sm">
     <div className="w-full h-52 bg-gray-200 rounded-2xl"></div>
@@ -22,30 +21,61 @@ const SkeletonCard = () => (
 
 const Tutors = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession(); 
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(false);
 
   useEffect(() => {
+    if (isPending) return;
+
     const fetchTutors = async () => {
       try {
         setLoading(true);
+        setAuthError(false);
 
-        const headers = {};
-        if (session?.user) {
-          headers["Authorization"] = `Bearer ${session.token || ""}`;
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        
+        // 🚀 টোকেন পাথ চেক করুন (যদি আপনার সিস্টেমে টোকেন কুকিজের মাধ্যমে যায়, তবে এই হেডার দরকার নেই)
+        const token = session?.token || session?.user?.token; 
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
         }
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=4`, {
+        // 🚀 আগের ফাইলের মতো NEXT_PUBLIC_URL ব্যবহার করা হলো (প্রয়োজনে পরিবর্তন করে নিন)
+        const baseUrl = process.env.NEXT_PUBLIC_URL || "";
+        const response = await fetch(`${baseUrl}/api/tutors?limit=4`, {
+          method: "GET",
           headers,
         });
+
+        if (response.status === 401) {
+          console.warn("Unauthorized: Please log in to view tutors.");
+          setAuthError(true);
+          setTutors([]);
+          return;
+        }
 
         if (!response.ok) {
           throw new Error(`Failed to fetch tutors: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        setTutors(Array.isArray(data) ? data : []);
+        const rawData = await response.json();
+        console.log("API Response data:", rawData); // 🚀 কনসোলে ডেটা স্ট্রাকচার চেক করুন
+
+        // 🚀 ডেটা যে ফরম্যাটেই আসুক না কেন, তা হ্যান্ডেল করার লজিক
+        let fetchedTutors = [];
+        if (Array.isArray(rawData)) {
+          fetchedTutors = rawData;
+        } else if (rawData.data && Array.isArray(rawData.data)) {
+          fetchedTutors = rawData.data;
+        } else if (rawData.tutors && Array.isArray(rawData.tutors)) {
+          fetchedTutors = rawData.tutors;
+        }
+
+        setTutors(fetchedTutors);
       } catch (error) {
         console.error("Error fetching tutors:", error);
         setTutors([]);
@@ -55,10 +85,10 @@ const Tutors = () => {
     };
 
     fetchTutors();
-  }, [session]);
+  }, [session, isPending]);
 
   const handleBookSession = (tutorId) => {
-    router.push(`/tutors/${tutorId}`);
+    router.push(`/tutors/${tutorId}`); // এটি ঠিক আছে, কারণ এটি আপনার ফ্রন্টএন্ড পেজের পাথ
   };
 
   return (
@@ -88,15 +118,14 @@ const Tutors = () => {
       )}
 
       {/* Tutor Grid */}
-      {!loading && (
+      {!loading && tutors.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {tutors?.map((tutor) => (
+          {tutors.map((tutor) => (
             <div
               key={tutor._id}
               className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 ease-out group flex flex-col justify-between"
             >
               <div>
-                {/* Image & Badge Container */}
                 <div className="relative w-full h-52 bg-gray-50 overflow-hidden">
                   <Image
                     src={
@@ -114,7 +143,6 @@ const Tutors = () => {
                   </span>
                 </div>
 
-                {/* Tutor Card Details */}
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-teal-600 transition-colors duration-300">
                     {tutor.name}
@@ -156,7 +184,6 @@ const Tutors = () => {
                 </div>
               </div>
 
-              {/* Fee & Booking Button */}
               <div className="p-6 pt-0 border-t border-gray-50 bg-gray-50/50 rounded-b-3xl">
                 <div className="flex items-baseline justify-between mb-4 pt-4">
                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Hourly Fee</span>
@@ -178,14 +205,22 @@ const Tutors = () => {
         </div>
       )}
 
-      {/* Empty State */}
+      {/* Error / Empty States */}
       {tutors.length === 0 && !loading && (
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200 max-w-lg mx-auto shadow-sm">
           <div className="w-16 h-16 bg-teal-50 text-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={authError ? "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" : "M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"} />
+            </svg>
           </div>
-          <h3 className="text-2xl font-bold text-gray-700">No Tutors Found</h3>
-          <p className="text-gray-400 mt-2 px-6">We couldn&apos;t find any available tutors at the moment. Please check back later!</p>
+          <h3 className="text-2xl font-bold text-gray-700">
+            {authError ? "Login Required" : "No Tutors Found"}
+          </h3>
+          <p className="text-gray-400 mt-2 px-6">
+            {authError 
+              ? "You need to be logged in to view the available tutors." 
+              : "We couldn't find any available tutors at the moment. Please check back later!"}
+          </p>
         </div>
       )}
     </section>

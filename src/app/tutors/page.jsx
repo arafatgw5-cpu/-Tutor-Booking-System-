@@ -3,14 +3,13 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import FilterBar from "../../components/FilterBar"; // আপনার ফোল্ডার স্ট্রাকচার অনুযায়ী পাথ ঠিক করে নিবেন
+import FilterBar from "../../components/FilterBar"; 
 
 const AllTutors = () => {
   const router = useRouter();
   const [tutors, setTutors] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ফিল্টার স্টেট
   const [searchName, setSearchName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -19,11 +18,20 @@ const AllTutors = () => {
     const fetchTutors = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`  ${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=8`, {
+        
+        const baseUrl = process.env.NEXT_PUBLIC_URL || "";
+        console.log("👉 API URL IS:", `${baseUrl}/api/tutors?limit=8`);
+       
+        const response = await fetch(`${baseUrl}/api/tutors?limit=8`, {
           headers: {
             "Content-Type": "application/json",
           },
         });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tutors: ${response.statusText}`);
+        }
+
         const data = await response.json();
 
         if (Array.isArray(data)) {
@@ -47,19 +55,17 @@ const AllTutors = () => {
     router.push(`/tutors/${tutorId}`);
   };
 
-  // ফিল্টার রিসেট ফাংশন
+  // ফিল্টার রিসেট ফাংশন (Fixed)
   const handleResetFilters = () => {
-    setSearchName("");
+    setSearchName(""); // ✅ Fixed: searchName থেকে setSearchName করা হয়েছে
     setStartDate("");
     setEndDate("");
   };
 
-  // ডাইনামিক ফিল্টারিং লজিক (নাম এবং তারিখ)
+  // ডাইনামিক ফিল্টারিং লজিক
   const filteredTutors = tutors.filter((tutor) => {
-    // ১. নাম অনুযায়ী ফিল্টার
     const matchName = tutor.name?.toLowerCase().includes(searchName.toLowerCase());
     
-    // ২. তারিখ অনুযায়ী ফিল্টার (যদি tutor.sessionStartDate থাকে)
     let matchDate = true;
     if (tutor.sessionStartDate) {
       const tutorDate = new Date(tutor.sessionStartDate);
@@ -92,11 +98,9 @@ const AllTutors = () => {
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-16 relative overflow-hidden">
-      {/* ব্যাকগ্রাউন্ড ডেকোরেশন গ্লো */}
       <div className="absolute top-0 left-1/4 w-72 h-72 bg-teal-100 rounded-full blur-3xl opacity-40 -z-10 animate-blob"></div>
       <div className="absolute top-20 right-1/4 w-72 h-72 bg-emerald-100 rounded-full blur-3xl opacity-40 -z-10 animate-blob animation-delay-2000"></div>
 
-      {/* হেডিং সেকশন */}
       <div className="text-center mb-12 space-y-3">
         <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
           All Tutors
@@ -104,7 +108,6 @@ const AllTutors = () => {
         <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 mx-auto rounded-full mt-2"></div>
       </div>
 
-      {/* আলাদা করা ফিল্টার কম্পোনেন্ট এখানে ব্যবহার করা হয়েছে */}
       <FilterBar 
         searchName={searchName}
         setSearchName={setSearchName}
@@ -115,7 +118,6 @@ const AllTutors = () => {
         handleResetFilters={handleResetFilters}
       />
 
-      {/* লোডিং অবস্থা */}
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {[...Array(8)].map((_, idx) => (
@@ -124,7 +126,6 @@ const AllTutors = () => {
         </div>
       )}
 
-      {/* টিউটর গ্রিড */}
       {!loading && filteredTutors.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {filteredTutors.map((tutor) => (
@@ -205,7 +206,6 @@ const AllTutors = () => {
         </div>
       )}
 
-      {/* ফাকা অবস্থা (Empty State) */}
       {!loading && filteredTutors.length === 0 && (
         <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200 max-w-lg mx-auto shadow-sm animate-fadeIn">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">

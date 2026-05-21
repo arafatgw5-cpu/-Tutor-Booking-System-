@@ -1,48 +1,25 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ Proxy Setup (Backend এর সাথে কানেক্ট করার জন্য)
-  // Auth routes (/api/auth/*) are excluded so Better Auth handles them in Next.js.
   async rewrites() {
     return {
-      beforeFiles: [
-        {
-          source: '/api/auth/:path*',
-          destination: '/api/auth/:path*',  // keep auth routes local
-        },
-      ],
-      afterFiles: [],
+      // Local API routes (like /api/auth) will run before fallback kicks in
       fallback: [
         {
           source: '/api/:path*',
-          destination: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/:path*`,
+          destination: `${process.env.NEXT_PUBLIC_URL || "https://backend-9-f4rlxz7sf-arafatgw5-cpus-projects.vercel.app"}/api/:path*`,
         },
       ],
     };
   },
 
-  // ✅ Image Optimization (বাহিরের ইমেজ লোড করার জন্য)
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'i.ibb.co.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'arafat-nexus-2.vercel.app', // ✅ নতুন লিংকটি এখানে অ্যাড করা হয়েছে
-      },
+      { protocol: 'https', hostname: 'i.ibb.co.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'https', hostname: 'arafat-nexus-2.vercel.app' },
     ],
   },
-  
-
 };  
 
-export default nextConfig; // ✅ ES Module সিনট্যাক্স
+export default nextConfig;

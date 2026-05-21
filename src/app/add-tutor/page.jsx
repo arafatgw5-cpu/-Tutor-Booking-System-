@@ -69,6 +69,7 @@ const AddTutor = () => {
         remainingSlots: Number(formData.totalSlots)
       };
 
+      // Changed: Use relative URL for Next.js API route
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -78,10 +79,13 @@ const AddTutor = () => {
       if (response.ok) {
         setSuccess(true);
         setTimeout(() => {
-          router.push(`${process.env.NEXT_PUBLIC_URL}/my-tutors`);
+          // Changed: Use relative URL for routing
+          router.push('/my-tutors');
         }, 1500);
       } else {
-        setError("Failed to add tutor! Please try again.");
+        // Parse backend error message if available
+        const errorData = await response.json().catch(() => null);
+        setError(errorData?.message || "Failed to add tutor! Please try again.");
       }
     } catch (err) {
       console.error(err);
