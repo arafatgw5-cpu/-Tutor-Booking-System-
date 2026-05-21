@@ -27,35 +27,35 @@ const Tutors = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        setLoading(true);
+
+        const headers = {};
+        if (session?.user) {
+          headers["Authorization"] = `Bearer ${session.token || ""}`;
+        }
+
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=4`, {
+          headers,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tutors: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        setTutors(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching tutors:", error);
+        setTutors([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTutors();
   }, [session]);
-
-  const fetchTutors = async () => {
-    try {
-      setLoading(true);
-
-      const headers = {};
-      if (session?.user) {
-        headers["Authorization"] = `Bearer ${session.token || ""}`;
-      }
-
-      const response = await fetch(`/api/tutors?limit=4`, {
-        headers,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch tutors: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      setTutors(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Error fetching tutors:", error);
-      setTutors([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleBookSession = (tutorId) => {
     router.push(`/tutors/${tutorId}`);
@@ -185,7 +185,7 @@ const Tutors = () => {
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
           <h3 className="text-2xl font-bold text-gray-700">No Tutors Found</h3>
-          <p className="text-gray-400 mt-2 px-6">We couldn't find any available tutors at the moment. Please check back later!</p>
+          <p className="text-gray-400 mt-2 px-6">We couldn&apos;t find any available tutors at the moment. Please check back later!</p>
         </div>
       )}
     </section>

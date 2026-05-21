@@ -24,6 +24,7 @@ const BookingModal = ({ isOpen, onClose, tutor }) => {
   // 🚀 Auto-fill exactly matching logged-in user details
   useEffect(() => {
     if (isOpen && user) {
+      // eslint-disable-next-line
       setFormData((prev) => ({
         ...prev,
         name: user.name || "",

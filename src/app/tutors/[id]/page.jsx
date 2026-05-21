@@ -13,30 +13,30 @@ export default function TutorDetails() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
+    const fetchTutorDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${id}`);
+        const data = await response.json();
+        
+ 
+        if (response.ok && data && !data.error) {
+          setTutor(data);
+        } else {
+          setTutor(null);
+        }
+      } catch (error) {
+        console.error("Error fetching tutor:", error);
+        setTutor(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (id) {
       fetchTutorDetails();
     }
   }, [id]);
-
-  const fetchTutorDetails = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${id}`);
-      const data = await response.json();
-      
- 
-      if (response.ok && data && !data.error) {
-        setTutor(data);
-      } else {
-        setTutor(null);
-      }
-    } catch (error) {
-      console.error("Error fetching tutor:", error);
-      setTutor(null);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleBookClick = () => {
     setIsModalOpen(true);

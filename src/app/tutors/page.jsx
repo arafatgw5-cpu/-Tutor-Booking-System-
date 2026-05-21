@@ -16,32 +16,32 @@ const AllTutors = () => {
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
+    const fetchTutors = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`  ${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=8`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+
+        if (Array.isArray(data)) {
+          setTutors(data);
+        } else {
+          console.error("Expected an array but received:", data);
+          setTutors([]);
+        }
+      } catch (error) {
+        console.error("Error fetching tutors:", error);
+        setTutors([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchTutors();
   }, []);
-
-  const fetchTutors = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`  ${process.env.NEXT_PUBLIC_URL}/api/tutors?limit=4`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-
-      if (Array.isArray(data)) {
-        setTutors(data);
-      } else {
-        console.error("Expected an array but received:", data);
-        setTutors([]);
-      }
-    } catch (error) {
-      console.error("Error fetching tutors:", error);
-      setTutors([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleBookSession = (tutorId) => {
     router.push(`/tutors/${tutorId}`);
@@ -213,7 +213,7 @@ const AllTutors = () => {
           </div>
           <h3 className="text-2xl font-bold text-gray-700">No Match Found</h3>
           <p className="text-gray-400 mt-2 px-6">
-            We couldn't find any tutor matching your search criteria. Try resetting the filters.
+            We couldn&apos;t find any tutor matching your search criteria. Try resetting the filters.
           </p>
           <button 
             onClick={handleResetFilters}

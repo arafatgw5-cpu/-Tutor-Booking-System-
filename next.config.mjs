@@ -1,13 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // ✅ Proxy Setup (Backend এর সাথে কানেক্ট করার জন্য)
+  // Auth routes (/api/auth/*) are excluded so Better Auth handles them in Next.js.
   async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_URL}/api/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/api/auth/:path*',
+          destination: '/api/auth/:path*',  // keep auth routes local
+        },
+      ],
+      afterFiles: [],
+      fallback: [
+        {
+          source: '/api/:path*',
+          destination: `${process.env.BACKEND_URL || 'http://localhost:5000'}/api/:path*`,
+        },
+      ],
+    };
   },
 
   // ✅ Image Optimization (বাহিরের ইমেজ লোড করার জন্য)

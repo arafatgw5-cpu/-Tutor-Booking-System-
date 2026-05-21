@@ -42,7 +42,7 @@ export default function BookedSessions() {
       }
     } catch (error) {
       console.error("Error fetching bookings:", error);
-    } finally { // 👈 এখানে স্পেলিং ফিক্স করা হয়েছে (finally)
+    } finally {
       setLoading(false);
     }
   };

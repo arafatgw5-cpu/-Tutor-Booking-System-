@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useSession, signOut } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
+// import { useSession, signOut } from "@/lib/auth-client";
 
 const NAV_LINKS = {
   guest: [
@@ -25,13 +26,13 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Better Auth সেশন হুক
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending } =authClient.useSession();
   const user = session?.user;
 
   // সেফ লগআউট হ্যান্ডলার
   const handleLogout = async () => {
     try {
-      await signOut();
+      await authClient.signOut();
       setIsMobileMenuOpen(false);
       router.push("/login");
       router.refresh(); // সার্ভার কম্পোনেন্টের ক্যাশ রিফ্রেশ করার জন্য
