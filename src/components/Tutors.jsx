@@ -4,8 +4,9 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { MapPin, Clock, GraduationCap, Briefcase, Star, Lock, SearchX, Sparkles } from "lucide-react";
+import { MapPin, Clock, GraduationCap, Briefcase, Star, Lock, SearchX, Sparkles, Loader2 } from "lucide-react";
 
+// ── প্রিমিয়াম স্কেলিটন লোডার ──
 const SkeletonCard = () => (
   <div className="bg-white rounded-2xl overflow-hidden border border-slate-200/70 shadow-sm flex flex-col">
     <div className="w-full h-56 bg-slate-100 animate-pulse relative">
@@ -46,7 +47,7 @@ const Tutors = () => {
       try {
         setLoading(true);
         setAuthError(false);
-          
+
         const headers = {
           "Content-Type": "application/json",
         };
@@ -56,13 +57,8 @@ const Tutors = () => {
           headers["Authorization"] = `Bearer ${token}`;
         }
 
-        // 1. Determine the Base URL
         const baseUrl = process.env.NEXT_PUBLIC_URL || "";
-        const targetUrl = `${baseUrl}/api/tutors?limit=4`;
-        
-        console.log("Attempting to fetch from:", targetUrl); // DEBUG LOG
-
-        const response = await fetch(targetUrl, {
+        const response = await fetch(`${baseUrl}/api/tutors?limit=4`, {
           method: "GET",
           headers,
         });
@@ -75,15 +71,7 @@ const Tutors = () => {
         }
 
         if (!response.ok) {
-          throw new Error(`Server responded with Status: ${response.status} ${response.statusText}`);
-        }
-
-        // 2. Prevent the "Unexpected token < in JSON" HTML error
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          const textResponse = await response.text();
-          console.error("Expected JSON but received HTML/Text:", textResponse.substring(0, 150) + "...");
-          throw new Error("API did not return valid JSON. Check your API route path or server.");
+          throw new Error(`Failed to fetch tutors: ${response.statusText}`);
         }
 
         const rawData = await response.json();
@@ -99,7 +87,7 @@ const Tutors = () => {
 
         setTutors(fetchedTutors);
       } catch (error) {
-        console.error("Detailed Fetch Error:", error.message || error);
+        console.error("Error fetching tutors:", error);
         setTutors([]);
       } finally {
         setLoading(false);
@@ -116,7 +104,7 @@ const Tutors = () => {
   return (
     <section className="bg-[#f8fafc] text-slate-800 selection:bg-teal-500/20 antialiased relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
       
-      {/* ── Decorative Background Glow ── */}
+      {/* ── ডেকোরেটিভ ব্যাকগ্রাউন্ড গ্লো ── */}
       <div className="absolute inset-0 pointer-events-none z-0">
         <div className="absolute top-[-5%] left-[10%] w-[500px] h-[500px] bg-teal-500/[0.04] rounded-full blur-[120px]" />
         <div className="absolute bottom-[20%] right-[-10%] w-[400px] h-[400px] bg-emerald-500/[0.03] rounded-full blur-[100px]" />
@@ -124,7 +112,7 @@ const Tutors = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto">
         
-        {/* ── Header Section ── */}
+        {/* ── হেডার সেকশন ── */}
         <div className="flex flex-col items-center text-center mb-16 space-y-3">
           <p className="text-xs font-bold tracking-[0.2em] uppercase text-teal-600/90 flex items-center justify-center gap-2">
             <Sparkles size={14} />
@@ -138,7 +126,7 @@ const Tutors = () => {
           </p>
         </div>
 
-        {/* ── Loading State ── */}
+        {/* ── লোডিং স্টেট ── */}
         {loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
             {[...Array(4)].map((_, idx) => (
@@ -147,7 +135,7 @@ const Tutors = () => {
           </div>
         )}
 
-        {/* ── Tutors Grid ── */}
+        {/* ── টিউটর গ্রিড ── */}
         {!loading && tutors.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
             {tutors.map((tutor) => (
@@ -155,7 +143,7 @@ const Tutors = () => {
                 key={tutor._id}
                 className="group relative flex flex-col rounded-2xl overflow-hidden border border-slate-200/70 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_16px_35px_rgba(0,0,0,0.06)] hover:border-teal-500/20"
               >
-                {/* Image & Badge */}
+                {/* ইমেজ ও ব্যাজ */}
                 <div className="h-56 overflow-hidden relative bg-slate-100">
                   <Image
                     src={
@@ -177,10 +165,10 @@ const Tutors = () => {
                   </div>
                 </div>
 
-                {/* Card Body */}
+                {/* কার্ড বডি */}
                 <div className="p-6 flex-1 flex flex-col">
                   
-                  {/* Name and Subject */}
+                  {/* নাম এবং সাবজেক্ট */}
                   <div className="mb-5">
                     <h3 className="text-xl font-bold text-slate-950 tracking-tight leading-snug mb-2 group-hover:text-teal-600 transition-colors duration-300">
                       {tutor.name}
@@ -191,7 +179,7 @@ const Tutors = () => {
                     </span>
                   </div>
 
-                  {/* Data List (Location, Time, etc) */}
+                  {/* ডাটা লিস্ট (Location, Time, etc) */}
                   <div className="space-y-3 text-xs text-slate-600 flex-1 border-b border-slate-100 pb-5">
                     <div className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-slate-50 border border-slate-100">
@@ -230,7 +218,7 @@ const Tutors = () => {
                     </div>
                   </div>
 
-                  {/* Footer (Fee & Button) */}
+                  {/* ফুটার (ফী ও বাটন) */}
                   <div className="pt-5 flex items-center justify-between mt-auto">
                     <div>
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Hourly Rate</p>
@@ -252,7 +240,7 @@ const Tutors = () => {
           </div>
         )}
 
-        {/* ── Empty / Error State ── */}
+        {/* ── এম্পটি / এরর স্টেট ── */}
         {tutors.length === 0 && !loading && (
           <div className="relative flex flex-col items-center justify-center py-24 rounded-3xl border border-slate-200/80 text-center px-4 bg-white shadow-sm overflow-hidden max-w-2xl mx-auto mt-8">
             <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
