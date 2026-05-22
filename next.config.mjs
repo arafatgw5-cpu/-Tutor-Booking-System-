@@ -6,7 +6,7 @@ const nextConfig = {
       fallback: [
         {
           source: '/api/:path*',
-          destination: `${process.env.NEXT_PUBLIC_URL || "https://backend-9-f4rlxz7sf-arafatgw5-cpus-projects.vercel.app"}/api/:path*`,
+          destination: `${process.env.NEXT_PUBLIC_URL || "https://tutor-booking-system-b-9-13.vercel.app"}/api/:path*`,
         },
       ],
     };

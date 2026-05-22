@@ -78,7 +78,7 @@ const SignUpPage = () => {
             Create Account
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-            Start your adventure with <span className="text-cyan-600 font-bold">Wanderlust</span>
+          - Smart Tutor Booking <span className="text-cyan-600 font-bold"> MediQueue </span>
           </p>
         </div>
 

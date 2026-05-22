@@ -54,7 +54,7 @@ const LoginPage = () => {
     try {
       await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/", // 🎯 ফিক্স: গুগল লগইন সফল হওয়ার পর হোমে রিডাইরেক্ট করবে
+        callbackURL: "/", 
       });
     } catch (err) {
       setServerError("Google sign-in failed.");
