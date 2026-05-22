@@ -17,13 +17,13 @@ export async function proxy(request) {
 
   return NextResponse.next();
 }
-
+// This middleware will run on all routes that match the specified patterns in the config below. It checks for the presence of the session cookie and redirects to the login page if it's not found.
 export const config = {
   matcher: [
     "/booked-sessions/:path*",
-    "/tutors/:path*",
-    "/add-tutor/:path*",
-    "/my-tutors/:path*",
+   
     "/update-tutor/:path*",
   ],
 };
+
+ 
