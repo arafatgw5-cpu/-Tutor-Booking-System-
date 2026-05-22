@@ -40,8 +40,12 @@ const SignUpPage = () => {
       console.log("Signup response:", { data, error });
 
       if (data) {
-        router.push("/");
-        router.refresh();
+        // Better Auth সাইন-আপের পর অটো লগইন করে দেয়, 
+        // তাই ম্যানুয়ালি লগইন করানোর জন্য সাইন-আউট করে সেশন ক্লিয়ার করে নিচ্ছি
+        await authClient.signOut(); 
+        
+        // এরপর লগইন পেজে রিডাইরেক্ট করে দিচ্ছি
+        router.push("/login");
       }
       
       if (error) {

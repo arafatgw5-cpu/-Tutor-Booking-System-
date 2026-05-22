@@ -5,7 +5,6 @@ import {
   Card, 
   Separator, 
   Button, 
-  Description, 
   FieldError, 
   Form, 
   Input, 
@@ -13,12 +12,11 @@ import {
   TextField 
 } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import Link from "next/link"; // 👈 নতুন লিংক কম্পোনেন্ট ইম্পোর্ট করা হয়েছে
+import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+// useRouter এখন আর দরকার নেই, তাই সেটি বাদ দেওয়া হয়েছে
 
 const LoginPage = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
 
@@ -37,8 +35,9 @@ const LoginPage = () => {
       });
 
       if (data) {
-        router.push('/');
-        router.refresh();
+        // 🎯 ফিক্স: router.push এর বদলে window.location.href ব্যবহার করা হয়েছে
+        // এটি ব্রাউজারকে ফ্রেশ রিকোয়েস্ট পাঠাতে সাহায্য করবে এবং রিফ্রেশ ছাড়াই অন্য পেজে যাওয়া যাবে
+        window.location.href = "/"; 
       }
 
       if (error) {
@@ -55,6 +54,7 @@ const LoginPage = () => {
     try {
       await authClient.signIn.social({
         provider: "google",
+        callbackURL: "/", // 🎯 ফিক্স: গুগল লগইন সফল হওয়ার পর হোমে রিডাইরেক্ট করবে
       });
     } catch (err) {
       setServerError("Google sign-in failed.");
@@ -71,7 +71,7 @@ const LoginPage = () => {
             Login
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-           Smart Tutor Booking<span className="text-cyan-600 font-bold">MediQueue</span>
+           Smart Tutor Booking <span className="text-cyan-600 font-bold">MediQueue</span>
           </p>
         </div>
 
@@ -155,7 +155,7 @@ const LoginPage = () => {
         <p className="text-center text-sm text-slate-500 font-medium -mt-2">
           Don&apos;t have an account?{" "}
           <Link 
-            href="/signup" 
+            href="/register" 
             className="text-cyan-600 font-bold hover:text-cyan-700 hover:underline transition-colors"
           >
             Register
