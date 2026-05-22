@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import BookingModal from "@/components/BookingModal"; 
+import { authClient } from "@/lib/auth-client";
 
 export default function TutorDetails() {
   const { id } = useParams(); 
@@ -16,7 +17,13 @@ export default function TutorDetails() {
     const fetchTutorDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${id}`);
+        const {token} = await authClient.token()
+        console.log("👉 Token Retrieved for Tutor Details:", token);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${id}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
         const data = await response.json();
         
  
