@@ -1,29 +1,28 @@
 import { NextResponse } from "next/server";
 
 export async function proxy(request) {
- 
-  const isProduction = process.env.BETTER_AUTH_URL === "production";
-  const cookieName = isProduction 
-    ? "__Secure-better-auth.session_token" 
-    : "better-auth.session_token";
-
-  const sessionCookie = request.cookies.get(cookieName)?.value;
+  
+  // লোকালহোস্ট এবং প্রোডাকশন (লাইভ) উভয়ের কুকি একসাথে চেক করার সবচেয়ে সেফ উপায়:
+  const sessionCookie = 
+    request.cookies.get("better-auth.session_token")?.value || 
+    request.cookies.get("__Secure-better-auth.session_token")?.value;
 
   console.log("Extracted Cookie:", sessionCookie);
 
+  // যদি টোকেন না পাওয়া যায়, তবেই লগিন পেজে পাঠাবে
   if (!sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
-// This middleware will run on all routes that match the specified patterns in the config below. It checks for the presence of the session cookie and redirects to the login page if it's not found.
+
 export const config = {
   matcher: [
     "/booked-sessions/:path*",
-   
+    "/tutors/:path*",
+    "/add-tutor/:path*",
+    "/my-tutors/:path*",
     "/update-tutor/:path*",
   ],
 };
-
- 
