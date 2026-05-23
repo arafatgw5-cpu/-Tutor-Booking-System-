@@ -62,7 +62,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-[90vh] flex items-center justify-center bg-gradient-to-b from-slate-50/50 to-white dark:from-gray-950 dark:to-slate-900 px-4 py-12 transition-colors duration-500 relative overflow-hidden">
       
-      {/* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট (ঐচ্ছিক সৌন্দর্য বৃদ্ধির জন্য) */}
+      {/* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-400/10 dark:bg-cyan-900/20 rounded-full blur-3xl pointer-events-none z-0"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-400/10 dark:bg-blue-900/20 rounded-full blur-3xl pointer-events-none z-0"></div>
 
@@ -93,7 +93,7 @@ const LoginPage = () => {
             isRequired
             name="email"
             type="email"
-            className="w-full"
+            className="w-full flex flex-col gap-1.5"
             validate={(value) => {
               if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
                 return "Please enter a valid email address";
@@ -101,15 +101,12 @@ const LoginPage = () => {
               return null;
             }}
           >
-            <Label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 block transition-colors duration-300">
+            <Label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block transition-colors duration-300">
               Email Address
             </Label>
             <Input 
               placeholder="john@example.com" 
-              classNames={{
-                inputWrapper: "w-full rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors",
-                input: "dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
-              }}
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 dark:hover:border-cyan-500 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
             <FieldError className="text-xs font-medium text-rose-500 mt-1" />
           </TextField>
@@ -120,13 +117,13 @@ const LoginPage = () => {
             minLength={8}
             name="password"
             type="password"
-            className="w-full"
+            className="w-full flex flex-col gap-1.5"
             validate={(value) => {
               if (value.length < 8) return "Password must be at least 8 characters";
               return null;
             }}
           >
-            <div className="flex justify-between items-center mb-1.5">
+            <div className="flex justify-between items-center">
               <Label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block transition-colors duration-300">
                 Password
               </Label>
@@ -142,10 +139,7 @@ const LoginPage = () => {
             
             <Input 
               placeholder="••••••••" 
-              classNames={{
-                inputWrapper: "w-full rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 dark:hover:border-cyan-500 transition-colors",
-                input: "dark:text-white tracking-widest placeholder:tracking-normal placeholder:text-slate-400 dark:placeholder:text-slate-500"
-              }}
+              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-cyan-500 dark:hover:border-cyan-500 outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all dark:text-white tracking-widest placeholder:tracking-normal placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
             <FieldError className="text-xs font-medium text-rose-500 mt-1" />
           </TextField>

@@ -25,9 +25,24 @@ const EditTutorPage = ({ params }) => {
   useEffect(() => {
     const fetchSingleTutor = async () => {
       try {
-        // NEXT_PUBLIC_URL না থাকলে সরাসরি রিলেটিভ পাথ ব্যবহার করবে
         const baseUrl = process.env.NEXT_PUBLIC_URL || "";
-        const res = await fetch(`${baseUrl}/api/tutors/${tutorId}`);
+        
+        // LocalStorage থেকে JWT টোকেন নেওয়া হচ্ছে
+        const token = localStorage.getItem("token"); 
+
+        const res = await fetch(`${baseUrl}/api/tutors/${tutorId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // JWT হেডার যুক্ত করা হলো
+          },
+        });
+
+        if (res.status === 401 || res.status === 403) {
+          router.push("/login"); // টোকেন না থাকলে বা এক্সপায়ার হলে লগইন পেজে পাঠাবে
+          return;
+        }
+
         if (!res.ok) throw new Error("Tutor not found");
         
         const data = await res.json();
@@ -45,15 +60,14 @@ const EditTutorPage = ({ params }) => {
     };
 
     if (tutorId) fetchSingleTutor();
-  }, [tutorId]);
+  }, [tutorId, router]);
 
-  // handle input change (Number conversion fixed here)
+  // handle input change
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     
     setFormData((prev) => ({ 
       ...prev, 
-      // ইনপুট টাইপ নাম্বার হলে সেটাকে Number-এ কনভার্ট করবে, ফাঁকা থাকলে ফাঁকাই রাখবে
       [name]: type === "number" ? (value === "" ? "" : Number(value)) : value 
     }));
   };
@@ -62,16 +76,27 @@ const EditTutorPage = ({ params }) => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setError(""); // রিকোয়েস্ট পাঠানোর আগে আগের এরর ক্লিয়ার করা ভালো
+    setError("");
     
     try {
       const baseUrl = process.env.NEXT_PUBLIC_URL || "";
-      // নোট: ব্যাকএন্ডে PUT নাকি PATCH ব্যবহার করেছেন তা নিশ্চিত হয়ে নিন
+      
+      // LocalStorage থেকে JWT টোকেন নেওয়া হচ্ছে
+      const token = localStorage.getItem("token");
+
       const res = await fetch(`${baseUrl}/api/tutors/${tutorId}`, {
         method: "PUT", 
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // JWT হেডার যুক্ত করা হলো
+        },
         body: JSON.stringify(formData),
       });
+
+      if (res.status === 401 || res.status === 403) {
+        router.push("/login"); // টোকেন ইনভ্যালিড হলে লগইন পেজে পাঠাবে
+        return;
+      }
 
       if (res.ok) {
         router.push("/my-tutors");

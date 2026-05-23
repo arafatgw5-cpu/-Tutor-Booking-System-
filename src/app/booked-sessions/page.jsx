@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useSession, authClient } from "@/lib/auth-client"; 
+import { useSession } from "@/lib/auth-client"; 
 
 export default function BookedSessions() {
   const router = useRouter();
@@ -16,16 +16,25 @@ export default function BookedSessions() {
   const fetchBookings = useCallback(async (email) => {
     try {
       setLoading(true);
-      const { token } = await authClient.token(); // API সিকিউরিটির জন্য টোকেন অ্যাড করা হলো
+      
+      // LocalStorage থেকে JWT টোকেন নেওয়া হচ্ছে
+      const token = localStorage.getItem("token"); 
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/booked-sessions/${email}`, {
         method: "GET",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` 
+          "Authorization": `Bearer ${token}` // JWT হেডার
         },
         cache: 'no-store' 
       });
+
+      // টোকেন না থাকলে বা এক্সপায়ার হলে লগইন পেজে পাঠাবে
+      if (response.status === 401 || response.status === 403) {
+        router.push("/login"); 
+        return;
+      }
+
       const data = await response.json();
 
       if (response.ok && Array.isArray(data)) {
@@ -39,7 +48,7 @@ export default function BookedSessions() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!isPending && !user) {
@@ -56,14 +65,21 @@ export default function BookedSessions() {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
 
     try {
-      const { token } = await authClient.token();
+      // LocalStorage থেকে JWT টোকেন নেওয়া হচ্ছে
+      const token = localStorage.getItem("token");
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/bookings/${bookingId}`, {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}` // JWT হেডার
         }
       });
+
+      // টোকেন ইনভ্যালিড হলে লগইন পেজে পাঠাবে
+      if (response.status === 401 || response.status === 403) {
+        router.push("/login");
+        return;
+      }
 
       if (response.ok) {
         setBookings((prev) => prev.filter((b) => b._id !== bookingId));

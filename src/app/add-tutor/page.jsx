@@ -69,13 +69,25 @@ const AddTutor = () => {
         remainingSlots: Number(formData.totalSlots)
       };
 
+      // LocalStorage থেকে JWT টোকেন নেওয়া হচ্ছে
+      const token = localStorage.getItem("token");
+
       // Use relative URL for Next.js API route
       const baseUrl = process.env.NEXT_PUBLIC_URL || "";
       const response = await fetch(`${baseUrl}/api/tutors`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // JWT হেডার যুক্ত করা হলো
+        },
         body: JSON.stringify(tutorData),
       });
+
+      // টোকেন ইনভ্যালিড বা এক্সপায়ার হলে লগইন পেজে রিডাইরেক্ট করবে
+      if (response.status === 401 || response.status === 403) {
+        router.push("/login");
+        return;
+      }
 
       if (response.ok) {
         setSuccess(true);

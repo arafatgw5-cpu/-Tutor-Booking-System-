@@ -45,6 +45,16 @@ const BookingModal = ({ isOpen, onClose, tutor }) => {
     setSuccess(false);
 
     try {
+      // 🚀 JWT Token Extraction
+      // Better Auth-এর কনফিগারেশন অনুযায়ী session.token বা localStorage থেকে টোকেন নিন
+      const token = session?.token || (typeof window !== "undefined" ? localStorage.getItem("token") : null);
+
+      if (!token) {
+        setError("You are not authenticated. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
       const bookingData = {
         ...formData,
         studentName: formData.name, // Ensure backend gets the correct field name
@@ -62,7 +72,10 @@ const BookingModal = ({ isOpen, onClose, tutor }) => {
       const baseUrl = process.env.NEXT_PUBLIC_URL || "";
       const response = await fetch(`${baseUrl}/api/bookings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // 🚀 JWT Authorization Header added
+        },
         body: JSON.stringify(bookingData),
       });
 

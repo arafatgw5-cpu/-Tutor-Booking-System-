@@ -6,6 +6,21 @@ import { useRouter } from "next/navigation";
 import FilterBar from "../../components/FilterBar"; 
 import { authClient } from "@/lib/auth-client";
 
+// 💡 SkeletonCard-কে মেইন কম্পোনেন্টের বাইরে আনা হয়েছে (Performance Optimization)
+const SkeletonCard = () => (
+  <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 p-5 space-y-4 animate-pulse shadow-sm">
+    <div className="w-full h-52 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
+    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3"></div>
+    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-1/2"></div>
+    <div className="space-y-3 pt-2">
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-full"></div>
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-5/6"></div>
+      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-4/5"></div>
+    </div>
+    <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl w-full pt-4"></div>
+  </div>
+);
+
 const AllTutors = () => {
   const router = useRouter();
   const [tutors, setTutors] = useState([]);
@@ -22,8 +37,12 @@ const AllTutors = () => {
         
         const baseUrl = process.env.NEXT_PUBLIC_URL || "";
         console.log("👉 API URL IS:", `${baseUrl}/api/tutors?limit=8`);
-        const {token} = await authClient.token()
+        
+        // 💡 Token null বা undefined হলেও যেন এরর না দেয়
+        const tokenResponse = await authClient.token();
+        const token = tokenResponse?.token || ""; 
         console.log("👉 Token Retrieved:", token);
+
         const response = await fetch(`${baseUrl}/api/tutors?limit=8`, {
           headers: {
             "Content-Type": "application/json",
@@ -65,7 +84,9 @@ const AllTutors = () => {
   };
 
   const filteredTutors = tutors.filter((tutor) => {
-    const matchName = tutor.name?.toLowerCase().includes(searchName.toLowerCase());
+    // সেফটি চেক: tutor.name যদি না থাকে
+    const tutorName = tutor.name || "";
+    const matchName = tutorName.toLowerCase().includes(searchName.toLowerCase());
     
     let matchDate = true;
     if (tutor.sessionStartDate) {
@@ -81,20 +102,6 @@ const AllTutors = () => {
 
     return matchName && matchDate;
   });
-
-  const SkeletonCard = () => (
-    <div className="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 p-5 space-y-4 animate-pulse shadow-sm">
-      <div className="w-full h-52 bg-gray-200 dark:bg-gray-700 rounded-2xl"></div>
-      <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3"></div>
-      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-1/2"></div>
-      <div className="space-y-3 pt-2">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-full"></div>
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-5/6"></div>
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full w-4/5"></div>
-      </div>
-      <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-xl w-full pt-4"></div>
-    </div>
-  );
 
   return (
     <section className="max-w-7xl mx-auto px-4 py-16 relative overflow-hidden transition-colors duration-300">
