@@ -41,22 +41,22 @@ const WhyChooseUs = () => {
   ];
 
   return (
-    <section className="relative bg-gray-50/50 py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      {/* ব্যাকগ্রাউন্ড অ্যাম্বিয়েন্ট লাইট (Silicon Valley Vibe) */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-100 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-100 rounded-full blur-3xl opacity-30 pointer-events-none"></div>
+    <section className="relative bg-gray-50/50 dark:bg-gray-950 py-24 px-4 sm:px-6 lg:px-8 overflow-hidden transition-colors duration-300">
+      {/* ব্যাকগ্রাউন্ড অ্যাম্বিয়েন্ট লাইট (Silicon Valley Vibe - Dark Mode Compatible) */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-emerald-100 dark:bg-emerald-900/20 rounded-full blur-3xl opacity-30 dark:opacity-40 pointer-events-none transition-colors duration-300"></div>
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-teal-100 dark:bg-teal-900/20 rounded-full blur-3xl opacity-30 dark:opacity-40 pointer-events-none transition-colors duration-300"></div>
 
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-7xl mx-auto relative z-10">
         
         {/* হেডিং সেকশন */}
         <div className="text-center mb-20 space-y-3">
-          <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent tracking-tight">
             Why Choose Us?
           </h2>
-          <p className="text-gray-500 text-lg max-w-md mx-auto">
+          <p className="text-gray-500 dark:text-slate-400 text-lg max-w-md mx-auto transition-colors duration-300">
             We provide the ultimate platform for seamless, secure, and smart learning experiences.
           </p>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 mx-auto rounded-full mt-2"></div>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 dark:from-teal-400 dark:to-emerald-300 mx-auto rounded-full mt-2"></div>
         </div>
         
         {/* কার্ডস গ্রিড */}
@@ -64,20 +64,20 @@ const WhyChooseUs = () => {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-white border border-gray-100/80 rounded-3xl p-8 flex flex-col items-center text-center shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 ease-out group"
+              className="bg-white dark:bg-slate-900 border border-gray-100/80 dark:border-slate-800/80 rounded-3xl p-8 flex flex-col items-center text-center shadow-sm dark:shadow-[0_2px_15px_rgba(0,0,0,0.1)] hover:shadow-2xl dark:hover:shadow-[0_20px_40px_rgba(20,184,166,0.15)] hover:-translate-y-2 transition-all duration-500 ease-out group"
             >
               {/* মডার্ন আইকন বক্স */}
-              <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-teal-600 group-hover:to-emerald-500 group-hover:text-white transition-all duration-500 ease-out shadow-sm shadow-emerald-100 group-hover:rotate-6">
+              <div className="w-14 h-14 bg-emerald-50 dark:bg-teal-500/10 text-emerald-600 dark:text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-teal-600 group-hover:to-emerald-500 group-hover:text-white dark:group-hover:text-white transition-all duration-500 ease-out shadow-sm shadow-emerald-100 dark:shadow-none group-hover:rotate-6">
                 {feature.icon}
               </div>
               
               {/* ফিচার টাইটেল */}
-              <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-teal-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors duration-300">
                 {feature.title}
               </h3>
               
               {/* বর্ণনা */}
-              <p className="text-gray-500 text-sm leading-relaxed px-1">
+              <p className="text-gray-500 dark:text-slate-400 text-sm leading-relaxed px-1 transition-colors duration-300">
                 {feature.description}
               </p>
             </div>

@@ -1,8 +1,10 @@
+// app/layout.js বা app/layout.jsx
 import { Inter, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider"; // <--- থিম প্রোভাইডার ইমপোর্ট করা হলো
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,14 +34,24 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} ${dmSans.variable} ${dmMono.variable} ${dmSerif.variable} bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors`}>
-        <Toaster position="top-right" />
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer/>
-        </div>
+    // suppressHydrationWarning দেওয়া জরুরি, না হলে থিম ফ্ল্যাশ এরর আসবে
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${inter.className} ${dmSans.variable} ${dmMono.variable} ${dmSerif.variable} bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Toaster position="top-right" />
+          <div className="flex flex-col min-h-screen">
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -3,12 +3,12 @@ const nextConfig = {
   async rewrites() {
     return {
       // Local API routes (like /api/auth) will run before fallback kicks in
-      fallback: [
-        {
-          source: '/api/:path*',
-          destination: `${process.env.NEXT_PUBLIC_URL || "https://tutor-booking-system-b-9-13.vercel.app"}/api/:path*`,
-        },
-      ],
+      // fallback: [
+      //   {
+      //     source: '/api/:path*',
+      //     destination: `${process.env.NEXT_PUBLIC_URL || "https://tutor-booking-system-b-9-13.vercel.app"}/api/:path*`,
+      //   },
+      // ],
     };
   },
 

@@ -25,3 +25,21 @@
 .animate-fadeIn {
   animation: fadeIn 0.4s ease-out forwards;
 }
+@layer base {
+  body {
+    /* লাইট মোডের জন্য ডিফল্ট কালার */
+    @apply bg-white text-slate-900 transition-colors duration-300;
+  }
+
+  .dark body {
+    /* ডার্ক মোডের জন্য ডিফল্ট কালার */
+    @apply bg-gray-950 text-slate-50 transition-colors duration-300;
+  }
+}
+
+/* @import "tailwindcss"; */
+
+/* এটি next-themes এর ডার্ক মোড কাজ করানোর জন্য যুক্ত করতে হবে */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* আপনার অন্যান্য CSS কোড (যদি থাকে) নিচে থাকবে */

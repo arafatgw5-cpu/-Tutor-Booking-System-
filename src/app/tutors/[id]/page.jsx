@@ -19,7 +19,6 @@ export default function TutorDetails() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/tutors/${id}`);
         const data = await response.json();
         
- 
         if (response.ok && data && !data.error) {
           setTutor(data);
         } else {
@@ -48,19 +47,19 @@ export default function TutorDetails() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-2xl text-teal-600 animate-pulse font-semibold">Loading Details...</div>
+      <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <div className="text-2xl text-teal-600 dark:text-teal-400 animate-pulse font-semibold">Loading Details...</div>
       </div>
     );
   }
 
   if (!tutor) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen gap-4">
-        <div className="text-2xl text-red-600 font-semibold">Tutor not found!</div>
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900 gap-4 transition-colors duration-300">
+        <div className="text-2xl text-red-600 dark:text-red-400 font-semibold">Tutor not found!</div>
         <button 
           onClick={() => router.push("/")}
-          className="px-5 py-2 bg-teal-600 text-white rounded-lg text-sm"
+          className="px-5 py-2 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-lg text-sm transition-colors duration-300 shadow-md"
         >
           Back to Home
         </button>
@@ -69,20 +68,21 @@ export default function TutorDetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8 transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-4">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="mb-6 text-teal-600 hover:text-teal-700 font-medium flex items-center gap-2 cursor-pointer"
+          className="mb-6 text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 font-medium flex items-center gap-2 cursor-pointer transition-colors"
         >
           ← Back to Tutors
         </button>
 
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-black/20 border border-transparent dark:border-gray-700 overflow-hidden transition-colors duration-300">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8">
+            
             {/* Tutor Image */}
-            <div className="rounded-xl overflow-hidden relative min-h-[300px] bg-gray-100">
+            <div className="rounded-xl overflow-hidden relative min-h-[300px] bg-gray-100 dark:bg-gray-700 transition-colors duration-300">
               <Image
                 src={
                   tutor.photo?.startsWith("http")
@@ -98,20 +98,19 @@ export default function TutorDetails() {
 
             {/* Tutor Details */}
             <div className="space-y-4">
-              <h1 className="text-3xl font-bold text-gray-800">{tutor.name}</h1>
-              <p className="text-teal-600 text-lg font-medium">{tutor.subject}</p>
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-white tracking-tight">{tutor.name}</h1>
+              <p className="text-teal-600 dark:text-teal-400 text-lg font-medium">{tutor.subject}</p>
 
-              <div className="space-y-3 text-gray-700">
-                <p><span className="font-semibold">Institution:</span> {tutor.institution || "N/A"}</p>
-                <p><span className="font-semibold">Experience:</span> {tutor.experience || "N/A"}</p>
-                <p><span className="font-semibold">Location:</span> {tutor.location || "N/A"}</p>
-                <p><span className="font-semibold">Mode:</span> {tutor.teachingMode || "N/A"}</p>
-                <p><span className="font-semibold">Available:</span> {tutor.availableDays || "N/A"} - {tutor.availableTime || "N/A"}</p>
-                <p><span className="font-semibold">Hourly Fee:</span> ৳{tutor.hourlyFee}/{tutor.feeUnit || "hr"}</p>
-                <p><span className="font-semibold">Remaining Slots:</span> {tutor.remainingSlots ?? 50}</p>
+              <div className="space-y-3 text-gray-700 dark:text-gray-300 text-sm sm:text-base">
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Institution:</span> {tutor.institution || "N/A"}</p>
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Experience:</span> {tutor.experience || "N/A"}</p>
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Location:</span> {tutor.location || "N/A"}</p>
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Mode:</span> {tutor.teachingMode || "N/A"}</p>
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Available:</span> {tutor.availableDays || "N/A"} - {tutor.availableTime || "N/A"}</p>
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Hourly Fee:</span> ৳{tutor.hourlyFee}/{tutor.feeUnit || "hr"}</p>
+                <p><span className="font-semibold text-gray-900 dark:text-gray-100">Remaining Slots:</span> {tutor.remainingSlots ?? 50}</p>
                 <p>
-                  <span className="font-semibold">Session Start:</span>{" "}
-               
+                  <span className="font-semibold text-gray-900 dark:text-gray-100">Session Start:</span>{" "}
                   {tutor.sessionStartDate 
                     ? new Date(tutor.sessionStartDate).toLocaleDateString() 
                     : "N/A"}
@@ -121,7 +120,7 @@ export default function TutorDetails() {
               {/* Book Session Button */}
               <button
                 onClick={handleBookClick}
-                className="w-full md:w-auto px-8 py-3 bg-teal-600 text-white rounded-lg font-medium hover:bg-teal-700 transition-colors shadow-md hover:shadow-lg mt-6 cursor-pointer"
+                className="w-full md:w-auto px-8 py-3 bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white rounded-lg font-medium transition-all shadow-md hover:shadow-lg mt-6 cursor-pointer"
               >
                 Book Session
               </button>

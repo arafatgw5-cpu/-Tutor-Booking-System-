@@ -28,7 +28,7 @@ const HowItWorks = () => {
       description: "Confirm your booking instantly with just a single click.",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
         </svg>
       )
     },
@@ -45,51 +45,51 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white">
-      {/* ব্যাকগ্রাউন্ড ডেকোরেশন গ্লো (Silicon Valley Tech Vibe) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-teal-50 rounded-full blur-3xl opacity-50 -z-10"></div>
+    <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-white dark:bg-gray-950 transition-colors duration-300">
+      {/* ব্যাকগ্রাউন্ড ডেকোরেশন গ্লো (Silicon Valley Tech Vibe - Dark Mode) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-teal-50 dark:bg-teal-950/20 rounded-full blur-3xl opacity-50 dark:opacity-40 -z-10 transition-colors duration-300"></div>
       
-      <div className="max-w-7xl mx-auto relative">
+      <div className="max-w-7xl mx-auto relative z-10">
         
         {/* হেডিং সেকশন */}
         <div className="text-center mb-20 space-y-3">
-          <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-500 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent tracking-tight">
             How It Works
           </h2>
-          <p className="text-gray-500 text-lg max-w-md mx-auto">
+          <p className="text-gray-500 dark:text-slate-400 text-lg max-w-md mx-auto transition-colors duration-300">
             Get started in minutes with our simple, transparent four-step process.
           </p>
-          <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 mx-auto rounded-full mt-2"></div>
+          <div className="w-24 h-1.5 bg-gradient-to-r from-teal-500 to-emerald-400 dark:from-teal-400 dark:to-emerald-300 mx-auto rounded-full mt-2"></div>
         </div>
         
         {/* কার্ডস গ্রিড কন্টেইনার */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
           
-          {/* কানেক্টিং লাইন (শুধুমাত্র বড় স্ক্রিনের জন্য) */}
-          <div className="hidden lg:block absolute top-1/4 left-[10%] right-[10%] h-[2px] bg-dashed bg-gradient-to-r from-teal-100 via-emerald-200 to-teal-100 -z-10 border-t-2 border-dashed border-teal-100"></div>
+          {/* কানেক্টিং লাইন (ডার্ক মোড কমপ্যাটিবল) */}
+          <div className="hidden lg:block absolute top-1/4 left-[10%] right-[10%] h-[2px] bg-gradient-to-r from-teal-100 via-emerald-200 to-teal-100 dark:from-teal-950/50 dark:via-emerald-900/40 dark:to-teal-950/50 -z-10 border-t-2 border-dashed border-teal-100 dark:border-teal-900/30"></div>
 
           {steps.map((step, index) => (
             <div 
               key={index} 
-              className="bg-white rounded-3xl p-8 flex flex-col items-center text-center border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 ease-out group relative"
+              className="bg-white dark:bg-slate-900 rounded-3xl p-8 flex flex-col items-center text-center border border-gray-100 dark:border-slate-800/80 shadow-sm dark:shadow-[0_2px_15px_rgba(0,0,0,0.1)] hover:shadow-2xl dark:hover:shadow-[0_20px_40px_rgba(20,184,166,0.12)] hover:-translate-y-2 transition-all duration-500 ease-out group relative"
             >
               {/* স্টেপ নাম্বার ব্যাজ */}
-              <span className="absolute top-4 right-5 text-xs font-black text-teal-200 group-hover:text-teal-400 transition-colors duration-300 tracking-widest">
+              <span className="absolute top-4 right-5 text-xs font-black text-teal-200 dark:text-slate-800 group-hover:text-teal-400 dark:group-hover:text-teal-500 transition-colors duration-300 tracking-widest">
                 {step.number}
               </span>
 
               {/* আইকন বক্স */}
-              <div className="w-14 h-14 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-teal-600 group-hover:to-emerald-500 group-hover:text-white transition-all duration-500 ease-out shadow-sm shadow-teal-100">
+              <div className="w-14 h-14 bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-gradient-to-br group-hover:from-teal-600 group-hover:to-emerald-500 group-hover:text-white transition-all duration-500 ease-out shadow-sm shadow-teal-100 dark:shadow-none">
                 {step.icon}
               </div>
               
               {/* কার্ড টাইটেল */}
-              <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-teal-600 transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-3 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors duration-300">
                 {step.title}
               </h3>
               
               {/* বর্ণনা */}
-              <p className="text-gray-500 text-sm leading-relaxed px-1">
+              <p className="text-gray-500 dark:text-slate-400 text-sm leading-relaxed px-1 transition-colors duration-300">
                 {step.description}
               </p>
             </div>
